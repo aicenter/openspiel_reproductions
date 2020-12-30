@@ -1,2 +1,2 @@
 # openspiel_benchmarks
-Results reproductions from originating papers in openspiel
+Results comparison between OpenSpiel implementations, associated paper & originating works
