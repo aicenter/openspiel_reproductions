@@ -5,7 +5,7 @@
 #SBATCH --mem-per-cpu 8G
 #SBATCH --time 1-0:00:00
 #SBATCH --job-name jupyter-notebook
-#SBATCH --output jupyter-notebook-%J.log
+#SBATCH --output slogs/jupyter-notebook-%J.log
 
 # get tunneling info
 XDG_RUNTIME_DIR=""
