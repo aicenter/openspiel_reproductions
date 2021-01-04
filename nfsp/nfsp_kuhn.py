@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""NFSP agents trained on Kuhn Poker."""
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -25,12 +27,13 @@ from open_spiel.python import policy
 from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import exploitability
 from open_spiel.python.algorithms import nfsp
-
 import csv
+import os
+from pathlib import Path
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_integer("num_train_episodes", int(3e6),
+flags.DEFINE_integer("num_train_episodes", int(10e7),
                      "Number of training episodes.")
 flags.DEFINE_integer("eval_every", 10000,
                      "Episode frequency at which the agents are evaluated.")
@@ -43,7 +46,20 @@ flags.DEFINE_integer("reservoir_buffer_capacity", int(2e6),
                      "Size of the reservoir buffer.")
 flags.DEFINE_float("anticipatory_param", 0.1,
                    "Prob of using the rl best response as episode policy.")
+flags.DEFINE_string("logname", "nfsp_kuhn", "Results output filename prefix")
+flags.DEFINE_string("logdir", "logs", "Directory for log files")
 
+def loginit(log_prefix):
+    i = 0
+    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
+        i += 1
+    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
+
+    with open(log_filename, 'w+') as f:
+        writer = csv.writer(f)
+        writer.writerow(["iteration", "exploitability"])
+
+    return log_filename
 
 class NFSPPolicies(policy.Policy):
   """Joint policy to be evaluated."""
@@ -75,7 +91,11 @@ class NFSPPolicies(policy.Policy):
 
 
 def main(unused_argv):
-  game = "leduc_poker"
+  Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
+  log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
+  log_filename = loginit(log_prefix)
+
+  game = "kuhn_poker"
   num_players = 2
 
   env_configs = {"players": num_players}
@@ -91,10 +111,6 @@ def main(unused_argv):
       "epsilon_end": 0.001,
   }
 
-  with open("nfsp_leduc.csv", 'a') as f:
-    writer = csv.writer(f)
-    writer.writerow(["iteration", "exploitability"])
-
   with tf.Session() as sess:
     # pylint: disable=g-complex-comprehension
     agents = [
@@ -106,16 +122,16 @@ def main(unused_argv):
 
     sess.run(tf.global_variables_initializer())
     for ep in range(FLAGS.num_train_episodes):
-      if (ep + 1) % FLAGS.eval_every == 0:
+      if ep % FLAGS.eval_every == 0:
         losses = [agent.loss for agent in agents]
         logging.info("Losses: %s", losses)
         expl = exploitability.exploitability(env.game, expl_policies_avg)
         logging.info("[%s] Exploitability AVG %s", ep + 1, expl)
         logging.info("_____________________________________________")
-
-        with open("nfsp_leduc.csv", 'a') as f:
-          writer = csv.writer(f)
-          writer.writerow([ep + 1, expl])
+        
+        with open(log_filename, 'a') as f:
+                writer = csv.writer(f)
+                writer.writerow([ep, expl])
 
       time_step = env.reset()
       while not time_step.last():
