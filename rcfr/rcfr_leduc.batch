@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH --partition cpulong
+#SBATCH --nodes 1
+#SBATCH --ntasks-per-node 1
+#SBATCH --mem-per-cpu 8G
+#SBATCH --time 3-0:00:00
+#SBATCH --job-name rcfr_leduc
+#SBATCH --output slogs/rcfr_leduc-%J.log
+
+module purge
+singularity exec ~/openspiel.sif python3 rcfr/rcfr.py --game leduc_poker --logname rcfr_leduc  --num_hidden_layers 2 --num_hidden_units 400 --num_hidden_factors 0
