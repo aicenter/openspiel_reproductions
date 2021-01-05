@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH --partition cpu
+#SBATCH --nodes 1
+#SBATCH --ntasks-per-node 1
+#SBATCH --mem-per-cpu 8G
+#SBATCH --time 1-0:00:00
+#SBATCH --job-name exp_descent_kuhn
+#SBATCH --output slogs/exp_descent_kuhn-%J.log
+
+module purge
+singularity exec ~/openspiel.sif python3 exp_descent/exp_descent.py --game_name kuhn_poker --logname exp_descent_kuhn_128_2_-4 --num_hidden 128 --init_lr 2 --regularizer_scale .0001

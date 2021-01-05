@@ -30,14 +30,6 @@ flags.DEFINE_integer("logfreq", 100, "How often to print the exploitability")
 flags.DEFINE_string("logname", "deep_cfr", "Results output filename prefix")
 flags.DEFINE_string("logdir", "logs", "Directory for log files")
 
-def log(start, end, iter_logged, i, conv):
-    hours, rem = divmod(end-start, 3600)
-    minutes, seconds = divmod(rem, 60)
-    elapsed = "{:0>2}:{:0>2}:{:.1f}".format(int(hours), int(minutes), seconds)
-    logging.info("Iteration: {iteration} | " \
-            "{n_iter} iterations took {elapsed} | " \
-            "exploitability: {conv:.5}".format(iteration=i, n_iter= i + 1 - iter_logged, elapsed=elapsed, conv=conv))
-
 def loginit(log_prefix):
     i = 0
     while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
@@ -73,9 +65,6 @@ def main(argv):
             advantage_network_train_steps=20,
             reinitialize_advantage_networks=False)
         sess.run(tf.global_variables_initializer())
-    
-        start = time.time()
-        iter_logged = 0
 
         outer_iter = int(FLAGS.iterations / FLAGS.logfreq)
 
@@ -84,14 +73,11 @@ def main(argv):
             
             average_policy = policy.tabular_policy_from_callable(game, deep_cfr_solver.action_probabilities)
             conv = exploitability.nash_conv(game, average_policy)
+            logging.info("Iteration: {} Nashconv: {}".format((i + 1) * FLAGS.logfreq, conv))
 
             with open(log_filename, 'a') as f:
                     writer = csv.writer(f)
-                    writer.writerow([i * FLAGS.logfreq, conv])
-            end = time.time()
-            log(start, end, iter_logged * FLAGS.logfreq, i * FLAGS.logfreq, conv)
-            iter_logged = i
-            start = end
+                    writer.writerow([(i + 1) * FLAGS.logfreq, conv])
 
 if __name__ == "__main__":
     app.run(main)

@@ -8,4 +8,4 @@
 #SBATCH --output slogs/dcfr_leduc-%J.log
 
 module purge
-singularity exec ~/openspiel.sif python3 deep_cfr.py --game leduc_poker --logname deep_cfr_leduc
+singularity exec ~/openspiel.sif python3 deep_cfr/deep_cfr.py --game leduc_poker --logname deep_cfr_leduc

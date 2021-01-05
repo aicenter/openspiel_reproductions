@@ -8,4 +8,4 @@
 #SBATCH --output slogs/dcfr_kuhn-%J.log
 
 module purge
-singularity exec ~/openspiel.sif python3 deep_cfr.py --game kuhn_poker --logname deep_cfr_kuhn
+singularity exec ~/openspiel.sif python3 deep_cfr/deep_cfr.py --game kuhn_poker --logname deep_cfr_kuhn

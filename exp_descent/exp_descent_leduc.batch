@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH --partition cpulong
+#SBATCH --nodes 1
+#SBATCH --ntasks-per-node 1
+#SBATCH --mem-per-cpu 8G
+#SBATCH --time 3-0:00:00
+#SBATCH --job-name exp_descent_leduc
+#SBATCH --output slogs/exp_descent_leduc-%J.log
+
+module purge
+singularity exec ~/openspiel.sif python3 exp_descent/exp_descent.py --game_name leduc_poker --logname exp_descent_leduc
