@@ -8,4 +8,16 @@
 #SBATCH --output slogs/nfsp_leduc-%J.log
 
 module purge
-singularity exec ~/openspiel.sif python3 nfsp/nfsp_leduc.py
+singularity exec ~/openspiel.sif python3 nfsp/nfsp_leduc.py \
+    --logname nfsp_leduc_armac_e06_rl-2_sl-3 \
+    --hidden_layers_sizes=128,128,128,128 \
+    --epsilon_decay_duration 20000000 \
+    --epsilon_start .06 \
+    --optimizer_str=adam \
+    --anticipatory_param .1 \
+    --rl_learning_rate .001 \
+    --sl_learning_rate .005 \
+    --replay_buffer_capacity 200000 \
+    --reservoir_buffer_capacity 2000000 \
+    --learn_every 64 \
+    --batch_size 128

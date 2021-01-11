@@ -8,4 +8,4 @@
 #SBATCH --output slogs/rcfr_leduc-%J.log
 
 module purge
-singularity exec ~/openspiel.sif python3 rcfr/rcfr.py --game leduc_poker --logname rcfr_leduc_factored  --num_hidden_layers 2 --num_hidden_units 400 --num_hidden_factors 200
+singularity exec ~/openspiel.sif python3 rcfr/rcfr.py --game leduc_poker --logname rcfr_leduc_lr10-3  --num_hidden_layers 2 --num_hidden_units 400 --step_size .001
