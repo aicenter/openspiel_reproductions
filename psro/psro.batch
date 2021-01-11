@@ -7,4 +7,4 @@
 #SBATCH --job-name psro
 #SBATCH --output psro-%J.log
 
-singularity exec openspiel.sif python3 kuhn_baselines/psro_v2_example.py
+singularity exec ~/openspiel.sif python3 psro/psro.py

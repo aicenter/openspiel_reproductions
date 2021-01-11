@@ -24,6 +24,9 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_integer("iterations", 100000, "Number of training iterations.")
 flags.DEFINE_integer("num_traversals", 40, "Number of traversals/games")
+flags.DEFINE_integer("batch_size_advantage", 128, "Adv fn batch size")
+flags.DEFINE_integer("batch_size_strategy", 1024, "Strategy batch size")
+flags.DEFINE_bool("reinitialize_advantage_networks", False, "Re-init value net on each CFR iter")
 flags.DEFINE_string("game", "leduc_poker", "Name of the game")
 flags.DEFINE_integer("players", 2, "Number of players")
 flags.DEFINE_integer("logfreq", 100, "How often to print the exploitability")
@@ -58,12 +61,12 @@ def main(argv):
             num_iterations=FLAGS.logfreq,
             num_traversals=FLAGS.num_traversals,
             learning_rate=1e-3,
-            batch_size_advantage=128,
-            batch_size_strategy=1024,
+            batch_size_advantage=FLAGS.batch_size_advantage,
+            batch_size_strategy=FLAGS.batch_size_strategy,
             memory_capacity=1e7,
             policy_network_train_steps=400,
             advantage_network_train_steps=20,
-            reinitialize_advantage_networks=False)
+            reinitialize_advantage_networks=FLAGS.reinitialize_advantage_networks)
         sess.run(tf.global_variables_initializer())
 
         outer_iter = int(FLAGS.iterations / FLAGS.logfreq)

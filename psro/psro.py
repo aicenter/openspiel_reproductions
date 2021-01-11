@@ -120,7 +120,7 @@ flags.DEFINE_integer("seed", 1, "Seed.")
 flags.DEFINE_bool("local_launch", False, "Launch locally or not.")
 flags.DEFINE_bool("verbose", False, "Enables verbose printing and profiling.")
 flags.DEFINE_integer("logfreq", 100, "logging frequency")
-flags.DEFINE_string("logname", "cfr", "Results output filename prefix")
+flags.DEFINE_string("logname", "psro", "Results output filename prefix")
 flags.DEFINE_string("logdir", "logs", "Directory for log files")
 
 def loginit(log_prefix):
@@ -304,11 +304,9 @@ def gpsro_looper(env, oracle, agents):
       aggr_policies = aggregator.aggregate(
           range(FLAGS.n_players), policies, meta_probabilities)
 
-      exploitabilities, expl_per_player = exploitability.nash_conv(
-          env.game, aggr_policies, return_only_nash_conv=False)
-
       _ = print_policy_analysis(policies, env.game, FLAGS.verbose)
       if gpsro_iteration % FLAGS.logfreq == 0:
+        exploitabilities, expl_per_player = exploitability.nash_conv(env.game, aggr_policies, return_only_nash_conv=False)
         logging.info("Iteration: {} Exploitability: {}".format(gpsro_iteration, exploitabilities))
         with open(log_filename, 'a') as f:
             writer = csv.writer(f)
