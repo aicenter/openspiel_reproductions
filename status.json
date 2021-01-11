@@ -5,8 +5,9 @@
         "ED": "✅",
         "XFP": "✅",
         "NFSP": "✅",
-        "RPG / RMPG / QPG": "No",
-        "PSRO": "No",
+        "RPG / RMPG": "✅",
+        "QPG": "✅",
+        "PSRO": "✅",
         "RCFR": "✅"
     },
     "Status": {
@@ -15,28 +16,31 @@
         "ED": "❌",
         "XFP": "✅",
         "NFSP": "✅*",
-        "RPG / RMPG / QPG": "N/A",
-        "PSRO": "N/A",
-        "RCFR": "✅*"
+        "RPG / RMPG": "❌",
+        "QPG": "❌",
+        "PSRO": "❌",
+        "RCFR": "✅"
     },
-    "Issues": {
+    "Notes / Issues": {
         "CFR": "None",
         "DeepCFR": "Does not converge",
         "ED": "Does not converge",
         "XFP": "None",
         "NFSP": "better than OS reported; OS inconsistent w/ Heinrich Silver",
-        "RPG / RMPG / QPG": "N/A",
+        "RPG / RMPG": "N/A",
+        "QPG": "N/A",
         "PSRO": "N/A",
-        "RCFR": "Consistent w/ Waugh et. al; Not quite as good as OS reported "
+        "RCFR": "sensitive to LR, can manipulate to match OpenSpiel & waugh et al."
     },
     "Possible Solutions": {
         "CFR": "N/A",
-        "DeepCFR": "",
-        "ED": "~~Parameter sweep from paper~~, contact lanctot",
+        "DeepCFR": "~~try Brown et al. params~~",
+        "ED": "Parameter sweep from paper",
         "XFP": "N/A",
-        "NFSP": "contact lanctot",
-        "RPG / RMPG / QPG": "N/A",
+        "NFSP": "~~Try ARMAC params~~, ~~try heinrich silver params~~",
+        "RPG / RMPG": "N/A",
+        "QPG": "N/A",
         "PSRO": "N/A",
-        "RCFR": "~~larger network~~, contact lanctot"
+        "RCFR": "~~larger network~~, ~~smaller LR~~"
     }
 }
