@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --partition cpulong
+#SBATCH --partition cpufast
 #SBATCH --nodes 1
 #SBATCH --ntasks-per-node 1
 #SBATCH --mem-per-cpu 8G
-#SBATCH --time 3-0:00:00
+#SBATCH --time 0-4:00:00
 #SBATCH --job-name dcfr_leduc
 #SBATCH --output slogs/dcfr_leduc-%J.log
 
 module purge
-singularity exec ~/openspiel.sif python3 deep_cfr/deep_cfr.py --game leduc_poker --logname deep_cfr_leduc_10kbatch_reinitVF --batch_size_advantage 10000 --batch_size_strategy 10000 --reinitialize_advantage_networks
+singularity exec ~/openspiel.sif python3 deep_cfr/deep_cfr.py --game leduc_poker --logname deep_cfr_leduc_400  --logfreq 400
