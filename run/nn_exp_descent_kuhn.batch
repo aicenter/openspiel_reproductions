@@ -10,9 +10,10 @@
 module purge
 singularity exec ~/openspiel.sif python3 exp_descent/nn_exp_descent.py \
     --game_name kuhn_poker \
-    --logname ed_kuhn_nn_adam
+    --logname ed_kuhn_nn_decayto
     --init_lr 1
     --lr_decay .999
+    --lr_decay_cont 500
     --num_layers 2
     --num_hidden 256
     --regularizer_scale .001

@@ -42,23 +42,47 @@ import tensorflow.compat.v1 as tf
 from open_spiel.python.algorithms import exploitability_descent
 import pyspiel
 
+import os
+from pathlib import Path
+import csv
+
 # Temporarily disable TF2 until we update the code.
-#tf.disable_v2_behavior()
+tf.disable_v2_behavior()
 
 FLAGS = flags.FLAGS
 
 flags.DEFINE_integer("num_steps", 100000, "Number of iterations")
 flags.DEFINE_string("game_name", "kuhn_poker", "Name of the game")
-flags.DEFINE_integer("print_freq", 1, "Log progress every this many steps")
 flags.DEFINE_float("init_lr", 0.1, "The initial learning rate")
+flags.DEFINE_float("lr_decay", .999, "Learnign rate multiplier per timestep")
+flags.DEFINE_integer("lr_decay_const", 500, "Decay until step")
 flags.DEFINE_float("regularizer_scale", 0.001,
                    "Scale for L2 regularization of NN weights")
 flags.DEFINE_integer("num_hidden", 64, "Hidden units.")
 flags.DEFINE_integer("num_layers", 1, "Hidden layers.")
+flags.DEFINE_integer("logfreq", 100, "logging frequency")
+flags.DEFINE_string("logname", "nned", "Results output filename prefix")
+flags.DEFINE_string("logdir", "logs", "Directory for log files")
+
+def loginit(log_prefix):
+    i = 0
+    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
+        i += 1
+    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
+
+    with open(log_filename, 'w+') as f:
+        writer = csv.writer(f)
+        writer.writerow(["iteration", "exploitability"])
+
+    return log_filename
 
 
 def main(argv):
   del argv
+
+  Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
+  log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
+  log_filename = loginit(log_prefix)
 
   # Create the game to use, and a loss calculator for it
   logging.info("Loading %s", FLAGS.game_name)
@@ -82,25 +106,30 @@ def main(argv):
   loss += tf.losses.get_regularization_loss()
 
   # Use a simple gradient descent optimizer
-  learning_rate = tf.placeholder(tf.float64, (), name="learning_rate")
-  optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+  #learning_rate = tf.placeholder(tf.float64, (), name="learning_rate")
+  #optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+  optimizer = tf.train.AdamOptimizer()
   optimizer_step = optimizer.minimize(loss)
 
   # Training loop
+  lr = FLAGS.init_lr
   with tf.train.MonitoredTrainingSession() as sess:
     for step in range(FLAGS.num_steps):
       t0 = time.time()
-      nash_conv_value, _ = sess.run(
-          [nash_conv, optimizer_step],
-          feed_dict={
-              learning_rate: FLAGS.init_lr / np.sqrt(1 + step),
-          })
+      if step < FLAGS.lr_decay_const:
+        lr *= FLAGS.lr_decay
+      nash_conv_value, _ = sess.run([nash_conv, optimizer_step])#,
+          # feed_dict={
+          #     learning_rate: lr#FLAGS.init_lr / np.sqrt(1 + step),
+          # })
       t1 = time.time()
       # Optionally log our progress
-      if step % FLAGS.print_freq == 0:
+      if step % FLAGS.logfreq == 0:
         logging.info("step=%d nash_conv=%g time per step=%.4f", step,
                      nash_conv_value, t1 - t0)
-
+        with open(log_filename, 'a') as f:
+          writer = csv.writer(f)
+          writer.writerow([step, nash_conv_value])
 
 if __name__ == "__main__":
   app.run(main)
