@@ -8,11 +8,11 @@
 #SBATCH --output slogs/ed_kuhn-%J.log
 
 module purge
-singularity exec ~/openspiel.sif python3 exp_descent/exp_descent.py \
+singularity exec ~/openspiel.sif python3 exp_descent/nn_exp_descent.py \
     --game_name kuhn_poker \
-    --logname ed_kuhn_fixed
-    #--init_lr 1
-    # --num_layers 5
-    # --num_hidden 256
-    # --regularizer_scale .0001
-    # --init_lr 1
+    --logname ed_kuhn_nn_adam
+    --init_lr 1
+    --lr_decay .999
+    --num_layers 2
+    --num_hidden 256
+    --regularizer_scale .001
