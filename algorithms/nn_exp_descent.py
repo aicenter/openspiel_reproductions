@@ -40,6 +40,7 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 
 from open_spiel.python.algorithms import exploitability_descent
+from open_spiel.python import simple_nets
 import pyspiel
 
 import os
@@ -106,9 +107,9 @@ def main(argv):
   loss += tf.losses.get_regularization_loss()
 
   # Use a simple gradient descent optimizer
-  #learning_rate = tf.placeholder(tf.float64, (), name="learning_rate")
-  #optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-  optimizer = tf.train.AdamOptimizer()
+  learning_rate = tf.placeholder(tf.float64, (), name="learning_rate")
+  optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+  #optimizer = tf.train.AdamOptimizer()
   optimizer_step = optimizer.minimize(loss)
 
   # Training loop
@@ -118,10 +119,10 @@ def main(argv):
       t0 = time.time()
       if step < FLAGS.lr_decay_const:
         lr *= FLAGS.lr_decay
-      nash_conv_value, _ = sess.run([nash_conv, optimizer_step])#,
-          # feed_dict={
-          #     learning_rate: lr#FLAGS.init_lr / np.sqrt(1 + step),
-          # })
+      nash_conv_value, _ = sess.run([nash_conv, optimizer_step],
+          feed_dict={
+              learning_rate: lr#FLAGS.init_lr / np.sqrt(1 + step),
+          })
       t1 = time.time()
       # Optionally log our progress
       if step % FLAGS.logfreq == 0:

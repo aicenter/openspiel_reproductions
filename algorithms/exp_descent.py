@@ -30,7 +30,7 @@ flags.DEFINE_float("init_lr", 1.0, "The initial learning rate")
 flags.DEFINE_float("lr_decay", .999, "Learnign rate multiplier per timestep")
 flags.DEFINE_integer("logfreq", 100, "logging frequency")
 flags.DEFINE_string("logname", "ed", "Results output filename prefix")
-flags.DEFINE_string("logdir", "logs", "Directory for log files")
+flags.DEFINE_string("logdir", "../logs", "Directory for log files")
 
 def loginit(log_prefix):
     i = 0
