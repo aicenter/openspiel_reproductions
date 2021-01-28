@@ -1,2 +1,2 @@
-# openspiel_benchmarks
-Results comparison between OpenSpiel implementations, associated paper & originating works
+# openspiel_reproductions
+Results reproductions for several core algorithms implemented in the [OpenSpiel](https://github.com/deepmind/open_spiel) framework for learning in games.
