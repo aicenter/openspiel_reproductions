@@ -1,4 +1,9 @@
-wandb/
+wandb
+jobs
+.vscode
+logs
+slogs
+
 *.csv
 *.swp
 
