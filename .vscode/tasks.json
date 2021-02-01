@@ -1,8 +1,0 @@
-{
-    "version": "2.0.0",
-    "tasks": [{
-        "label": "loadcontainer",
-        "command": "singularity shell ~/openspiel.sif",
-        "type": "shell"
-    }]
-}
