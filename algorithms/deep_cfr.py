@@ -15,11 +15,6 @@ from open_spiel.python.algorithms import expected_game_score
 from open_spiel.python.algorithms import exploitability
 import pyspiel
 
-import os
-from pathlib import Path
-import csv
-import time
-
 FLAGS = flags.FLAGS
 
 flags.DEFINE_integer("iterations", 100000, "Number of training iterations.")
@@ -30,25 +25,14 @@ flags.DEFINE_bool("reinitialize_advantage_networks", False, "Re-init value net o
 flags.DEFINE_string("game", "leduc_poker", "Name of the game")
 flags.DEFINE_integer("players", 2, "Number of players")
 flags.DEFINE_integer("logfreq", 100, "How often to print the exploitability")
-flags.DEFINE_string("logname", "deep_cfr", "Results output filename prefix")
-flags.DEFINE_string("logdir", "logs", "Directory for log files")
-
-def loginit(log_prefix):
-    i = 0
-    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
-        i += 1
-    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
-
-    with open(log_filename, 'w+') as f:
-        writer = csv.writer(f)
-        writer.writerow(["iteration", "exploitability"])
-
-    return log_filename
+flags.DEFINE_string("project", "openspiel", "project name")
+flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
 def main(argv):
-    Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
-    log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
-    log_filename = loginit(log_prefix)
+    if not FLAGS.no_wandb:
+        import wandb
+        wandb.init(project=FLAGS.project)
+        wandb.config.update(flags.FLAGS)
     
     game = pyspiel.load_game(FLAGS.game, {"players": pyspiel.GameParameter(FLAGS.players)})
 
@@ -76,11 +60,10 @@ def main(argv):
             
             average_policy = policy.tabular_policy_from_callable(game, deep_cfr_solver.action_probabilities)
             conv = exploitability.nash_conv(game, average_policy)
-            logging.info("Iteration: {} Nashconv: {}".format((i + 1) * FLAGS.logfreq, conv))
+            if not FLAGS.no_wandb:
+                wandb.log({"Iteration": i, 'NashConv': conv})
 
-            with open(log_filename, 'a') as f:
-                    writer = csv.writer(f)
-                    writer.writerow([(i + 1) * FLAGS.logfreq, conv])
+            logging.info("Iteration: {} NashConv: {}".format(i, conv))
 
 if __name__ == "__main__":
     app.run(main)

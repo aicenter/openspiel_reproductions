@@ -2,8 +2,25 @@ project: openspiel
 container: /home/waltomic/openspiel_jupyter_wandb-v0.1.sif
 
 run:
-  #- xfp_kuhn
+  #- cfr_kuhn
+  #- cfr_leduc
   #- deep_cfr_kuhn
+  - deep_cfr_leduc
+  - exp_descent_kuhn
+  - exp_descent_leduc
+  - nfsp_kuhn
+  - nfsp_leduc
+  - nn_exp_descent_kuhn
+  - nn_exp_descent_leduc
+  - qpg_kuhn
+  - qpg_leduc
+  - rpg_kuhn
+  - rpg_leduc
+  - psro_kuhn
+  - psro_leduc
+  - rcfr_kuhn
+  - rcfr_leduc
+  #- xfp_kuhn
   #- xfp_leduc
 
 cfr_kuhn:

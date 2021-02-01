@@ -24,10 +24,6 @@ from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import exploitability
 from open_spiel.python.algorithms import nfsp
 
-import csv
-import os
-from pathlib import Path
-
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string("game_name", "leduc_poker",
@@ -74,21 +70,8 @@ flags.DEFINE_string("evaluation_metric", "exploitability",
 flags.DEFINE_bool("use_checkpoints", False, "Save/load neural network weights.")
 flags.DEFINE_string("checkpoint_dir", "/tmp/nfsp_test",
                     "Directory to save/load the agent.")
-flags.DEFINE_string("logname", "nfsp_leduc", "Results output filename prefix")
-flags.DEFINE_string("logdir", "logs", "Directory for log files")
-
-def loginit(log_prefix):
-    i = 0
-    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
-        i += 1
-    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
-
-    with open(log_filename, 'w+') as f:
-        writer = csv.writer(f)
-        writer.writerow(["iteration", "exploitability"])
-
-    return log_filename
-
+flags.DEFINE_string("project", "openspiel", "project name")
+flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
 class NFSPPolicies(policy.Policy):
   """Joint policy to be evaluated."""
@@ -123,9 +106,10 @@ class NFSPPolicies(policy.Policy):
 
 
 def main(unused_argv):
-  Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
-  log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
-  log_filename = loginit(log_prefix)
+  if not FLAGS.no_wandb:
+    import wandb
+    wandb.init(project=FLAGS.project)
+    wandb.config.update(flags.FLAGS)
 
   logging.info("Loading %s", FLAGS.game_name)
   game = FLAGS.game_name
@@ -178,16 +162,15 @@ def main(unused_argv):
           # Avg exploitability is implemented only for 2 players constant-sum
           # games, use nash_conv otherwise.
           expl = exploitability.exploitability(env.game, joint_avg_policy)
-          logging.info("[%s] Exploitability AVG %s", ep + 1, expl)
-          with open(log_filename, 'a') as f:
-            writer = csv.writer(f)
-            writer.writerow([ep, expl])
+          if not FLAGS.no_wandb:
+            wandb.log({"Iteration": ep, 'Exploitability': expl})
+          logging.info("Iteration: {} Exploitability: {}".format(ep, expl))
         elif FLAGS.evaluation_metric == "nash_conv":
           nash_conv = exploitability.nash_conv(env.game, joint_avg_policy)
-          logging.info("[%s] NashConv %s", ep + 1, nash_conv)
-          with open(log_filename, 'a') as f:
-            writer = csv.writer(f)
-            writer.writerow([ep, nash_conv])
+          if not FLAGS.no_wandb:
+            wandb.log({"Iteration": ep, 'NashConv': nash_conv})
+
+            logging.info("Iteration: {} NashConv: {}".format(ep, nash_conv))
         else:
           raise ValueError(" ".join(("Invalid evaluation metric, choose from",
                                      "'exploitability', 'nash_conv'.")))

@@ -14,8 +14,8 @@ if __name__ == "__main__":
     for experiment in config["run"]:
         exp_config = config[experiment]
         jobfile = os.path.join(args.jobdir, "{}.job".format(experiment))
-        args = (config["container"], exp_config["script"], exp_config["flagfile"])
-        cmd = "singularity exec {} python3 {} --flagfile {}".format(*args)
+        jobargs = (config["container"], exp_config["script"], exp_config["flagfile"])
+        cmd = "singularity exec {} python3 {} --flagfile {}".format(*jobargs)
         
         with open(jobfile, "w") as f:
             f.writelines("#!/bin/bash\n")

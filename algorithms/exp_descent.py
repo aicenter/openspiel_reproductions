@@ -14,10 +14,6 @@ import tensorflow.compat.v1 as tf
 from open_spiel.python.algorithms import exploitability_descent
 import pyspiel
 
-import os
-from pathlib import Path
-import csv
-
 # Temporarily disable TF2 until we update the code.
 tf.disable_v2_behavior()
 
@@ -29,26 +25,15 @@ flags.DEFINE_string("solver", "tabular", "Tabular or nn")
 flags.DEFINE_float("init_lr", 1.0, "The initial learning rate")
 flags.DEFINE_float("lr_decay", .999, "Learnign rate multiplier per timestep")
 flags.DEFINE_integer("logfreq", 100, "logging frequency")
-flags.DEFINE_string("logname", "ed", "Results output filename prefix")
-flags.DEFINE_string("logdir", "../logs", "Directory for log files")
-
-def loginit(log_prefix):
-    i = 0
-    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
-        i += 1
-    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
-
-    with open(log_filename, 'w+') as f:
-        writer = csv.writer(f)
-        writer.writerow(["iteration", "exploitability"])
-
-    return log_filename
+flags.DEFINE_string("project", "openspiel", "project name")
+flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
 def main(argv):
-  Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
-  log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
-  log_filename = loginit(log_prefix)
-  
+  if not FLAGS.no_wandb:
+    import wandb
+    wandb.init(project=FLAGS.project)
+    wandb.config.update(flags.FLAGS)
+
   game = pyspiel.load_game(FLAGS.game_name)
   solver = exploitability_descent.Solver(game)
 
@@ -61,11 +46,10 @@ def main(argv):
       conv = solver.step(sess, learning_rate = lr)
       
       if i % FLAGS.logfreq == 0:
-        logging.info("Iteration: {} Exploitability: {}".format(i, conv))
-
-        with open(log_filename, 'a') as f:
-          writer = csv.writer(f)
-          writer.writerow([i, conv])
+        if not FLAGS.no_wandb:
+          wandb.log({"Iteration": i, 'NashConv': conv})
+          
+        logging.info("Iteration: {} NashConv: {}".format(i, conv))
 
 if __name__ == "__main__":
   app.run(main)

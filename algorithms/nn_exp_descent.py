@@ -43,10 +43,6 @@ from open_spiel.python.algorithms import exploitability_descent
 from open_spiel.python import simple_nets
 import pyspiel
 
-import os
-from pathlib import Path
-import csv
-
 # Temporarily disable TF2 until we update the code.
 tf.disable_v2_behavior()
 
@@ -62,28 +58,16 @@ flags.DEFINE_float("regularizer_scale", 0.001,
 flags.DEFINE_integer("num_hidden", 64, "Hidden units.")
 flags.DEFINE_integer("num_layers", 1, "Hidden layers.")
 flags.DEFINE_integer("logfreq", 100, "logging frequency")
-flags.DEFINE_string("logname", "nned", "Results output filename prefix")
-flags.DEFINE_string("logdir", "logs", "Directory for log files")
-
-def loginit(log_prefix):
-    i = 0
-    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
-        i += 1
-    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
-
-    with open(log_filename, 'w+') as f:
-        writer = csv.writer(f)
-        writer.writerow(["iteration", "exploitability"])
-
-    return log_filename
-
+flags.DEFINE_string("project", "openspiel", "project name")
+flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
 def main(argv):
   del argv
 
-  Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
-  log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
-  log_filename = loginit(log_prefix)
+  if not FLAGS.no_wandb:
+    import wandb
+    wandb.init(project=FLAGS.project)
+    wandb.config.update(flags.FLAGS)
 
   # Create the game to use, and a loss calculator for it
   logging.info("Loading %s", FLAGS.game_name)
@@ -126,11 +110,10 @@ def main(argv):
       t1 = time.time()
       # Optionally log our progress
       if step % FLAGS.logfreq == 0:
-        logging.info("step=%d nash_conv=%g time per step=%.4f", step,
-                     nash_conv_value, t1 - t0)
-        with open(log_filename, 'a') as f:
-          writer = csv.writer(f)
-          writer.writerow([step, nash_conv_value])
+        if not FLAGS.no_wandb:
+          wandb.log({"Iteration": step, 'NashConv': nash_conv_value})
+
+        logging.info("Iteration: {} NashConv: {}".format(step, nash_conv_value))
 
 if __name__ == "__main__":
   app.run(main)

@@ -48,11 +48,6 @@ from open_spiel.python.algorithms.psro_v2 import rl_oracle
 from open_spiel.python.algorithms.psro_v2 import rl_policy
 from open_spiel.python.algorithms.psro_v2 import strategy_selectors
 
-import os
-from pathlib import Path
-import csv
-
-
 FLAGS = flags.FLAGS
 
 # Game-related
@@ -120,20 +115,8 @@ flags.DEFINE_integer("seed", 1, "Seed.")
 flags.DEFINE_bool("local_launch", False, "Launch locally or not.")
 flags.DEFINE_bool("verbose", True, "Enables verbose printing and profiling.")
 
-flags.DEFINE_string("logname", "psro", "Results output filename prefix")
-flags.DEFINE_string("logdir", "logs", "Directory for log files")
-
-def loginit(log_prefix):
-    i = 0
-    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
-        i += 1
-    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
-
-    with open(log_filename, 'w+') as f:
-        writer = csv.writer(f)
-        writer.writerow(["iteration", "exploitability"])
-
-    return log_filename
+flags.DEFINE_string("project", "openspiel", "project name")
+flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
 def init_pg_responder(sess, env):
   """Initializes the Policy Gradient-based responder and agents."""
@@ -263,9 +246,10 @@ def print_policy_analysis(policies, game, verbose=False):
 
 def gpsro_looper(env, oracle, agents):
   """Initializes and executes the GPSRO training loop."""
-  Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
-  log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
-  log_filename = loginit(log_prefix)
+  if not FLAGS.no_wandb:
+    import wandb
+    wandb.init(project=FLAGS.project)
+    wandb.config.update(flags.FLAGS)
 
   sample_from_marginals = True  # TODO(somidshafiei) set False for alpharank
   training_strategy_selector = FLAGS.training_strategy_selector or strategy_selectors.probabilistic_strategy_selector
@@ -307,9 +291,8 @@ def gpsro_looper(env, oracle, agents):
       exploitabilities, expl_per_player = exploitability.nash_conv(
           env.game, aggr_policies, return_only_nash_conv=False)
       
-      with open(log_filename, 'a') as f:
-        writer = csv.writer(f)
-        writer.writerow([gpsro_iteration * FLAGS.prd_iterations, exploitabilities])
+      if not FLAGS.no_wandb:
+          wandb.log({"Iteration": gpsro_iteration * FLAGS.prd_iterations, 'NashConv': exploitabilities})
 
       _ = print_policy_analysis(policies, env.game, FLAGS.verbose)
       if FLAGS.verbose:

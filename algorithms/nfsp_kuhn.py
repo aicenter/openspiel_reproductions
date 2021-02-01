@@ -27,9 +27,6 @@ from open_spiel.python import policy
 from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import exploitability
 from open_spiel.python.algorithms import nfsp
-import csv
-import os
-from pathlib import Path
 
 FLAGS = flags.FLAGS
 
@@ -46,20 +43,8 @@ flags.DEFINE_integer("reservoir_buffer_capacity", int(2e6),
                      "Size of the reservoir buffer.")
 flags.DEFINE_float("anticipatory_param", 0.1,
                    "Prob of using the rl best response as episode policy.")
-flags.DEFINE_string("logname", "nfsp_kuhn", "Results output filename prefix")
-flags.DEFINE_string("logdir", "logs", "Directory for log files")
-
-def loginit(log_prefix):
-    i = 0
-    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
-        i += 1
-    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
-
-    with open(log_filename, 'w+') as f:
-        writer = csv.writer(f)
-        writer.writerow(["iteration", "exploitability"])
-
-    return log_filename
+flags.DEFINE_string("project", "openspiel", "project name")
+flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
 class NFSPPolicies(policy.Policy):
   """Joint policy to be evaluated."""
@@ -91,9 +76,10 @@ class NFSPPolicies(policy.Policy):
 
 
 def main(unused_argv):
-  Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
-  log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
-  log_filename = loginit(log_prefix)
+  if not FLAGS.no_wandb:
+    import wandb
+    wandb.init(project=FLAGS.project)
+    wandb.config.update(flags.FLAGS)
 
   game = "kuhn_poker"
   num_players = 2
@@ -126,12 +112,10 @@ def main(unused_argv):
         losses = [agent.loss for agent in agents]
         logging.info("Losses: %s", losses)
         expl = exploitability.exploitability(env.game, expl_policies_avg)
-        logging.info("[%s] Exploitability AVG %s", ep + 1, expl)
-        logging.info("_____________________________________________")
-        
-        with open(log_filename, 'a') as f:
-                writer = csv.writer(f)
-                writer.writerow([ep, expl])
+        if not FLAGS.no_wandb:
+          wandb.log({"Iteration": ep, 'Exploitability': expl})
+
+        logging.info("Iteration: {} Exploitability: {}".format(i, expl))
 
       time_step = env.reset()
       while not time_step.last():

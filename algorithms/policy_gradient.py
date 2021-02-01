@@ -28,10 +28,6 @@ from open_spiel.python import rl_environment
 from open_spiel.python.algorithms import exploitability
 from open_spiel.python.algorithms import policy_gradient
 
-import os
-from pathlib import Path
-import csv
-
 FLAGS = flags.FLAGS
 
 flags.DEFINE_integer("num_episodes", int(1e6), "Number of train episodes.")
@@ -40,21 +36,8 @@ flags.DEFINE_enum("loss_str", "rpg", ["a2c", "rpg", "qpg", "rm"],
                   "PG loss to use.")
 flags.DEFINE_list("hidden_layers_sizes", [128,], "Number of hidden units in the avg-net and Q-net.")
 flags.DEFINE_integer("logfreq", int(1e3), "logging frequency")
-flags.DEFINE_string("logname", "pg", "Results output filename prefix")
-flags.DEFINE_string("logdir", "logs", "Directory for log files")
-
-def loginit(log_prefix):
-    i = 0
-    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
-        i += 1
-    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
-
-    with open(log_filename, 'w+') as f:
-        writer = csv.writer(f)
-        writer.writerow(["iteration", "exploitability"])
-
-    return log_filename
-
+flags.DEFINE_string("project", "openspiel", "project name")
+flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
 class PolicyGradientPolicies(policy.Policy):
   """Joint policy to be evaluated."""
@@ -84,9 +67,10 @@ class PolicyGradientPolicies(policy.Policy):
 
 
 def main(_):
-  Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
-  log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
-  log_filename = loginit(log_prefix)
+  if not FLAGS.no_wandb:
+    import wandb
+    wandb.init(project=FLAGS.project)
+    wandb.config.update(flags.FLAGS)
 
   game = FLAGS.game
   num_players = 2
@@ -119,9 +103,8 @@ def main(_):
         msg += "{}: {}\n{}\n".format(ep + 1, expl, losses)
         logging.info("%s", msg)
 
-        with open(log_filename, 'a') as f:
-          writer = csv.writer(f)
-          writer.writerow([ep, expl])
+        if not FLAGS.no_wandb:
+          wandb.log({"Iteration": ep, 'Exploitability': expl})
 
       time_step = env.reset()
       while not time_step.last():
