@@ -68,6 +68,7 @@ def main(argv):
     import wandb
     wandb.init(project=FLAGS.project)
     wandb.config.update(flags.FLAGS)
+    wandb.config.update({"solver": "nn ed"})
 
   # Create the game to use, and a loss calculator for it
   logging.info("Loading %s", FLAGS.game_name)

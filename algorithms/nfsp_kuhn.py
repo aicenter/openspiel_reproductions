@@ -80,6 +80,7 @@ def main(unused_argv):
     import wandb
     wandb.init(project=FLAGS.project)
     wandb.config.update(flags.FLAGS)
+    wandb.config.update({"solver": "nfsp"})
 
   game = "kuhn_poker"
   num_players = 2

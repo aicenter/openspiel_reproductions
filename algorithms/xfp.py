@@ -24,6 +24,7 @@ def main(argv):
         import wandb
         wandb.init(project=FLAGS.project)
         wandb.config.update(flags.FLAGS)
+        wandb.config.update({"solver": "xfp"})
         
     game = pyspiel.load_game(FLAGS.game, {"players": pyspiel.GameParameter(FLAGS.players)})
     solver = fictitious_play.XFPSolver(game)

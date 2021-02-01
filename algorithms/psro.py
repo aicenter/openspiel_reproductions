@@ -250,6 +250,7 @@ def gpsro_looper(env, oracle, agents):
     import wandb
     wandb.init(project=FLAGS.project)
     wandb.config.update(flags.FLAGS)
+    wandb.config.update({"solver": "psro"})
 
   sample_from_marginals = True  # TODO(somidshafiei) set False for alpharank
   training_strategy_selector = FLAGS.training_strategy_selector or strategy_selectors.probabilistic_strategy_selector

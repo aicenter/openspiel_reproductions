@@ -110,6 +110,7 @@ def main(unused_argv):
     import wandb
     wandb.init(project=FLAGS.project)
     wandb.config.update(flags.FLAGS)
+    wandb.config.update({"solver": "nfsp"})
 
   logging.info("Loading %s", FLAGS.game_name)
   game = FLAGS.game_name

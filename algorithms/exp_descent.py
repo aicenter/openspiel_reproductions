@@ -21,7 +21,6 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_integer("num_steps", 100000, "Number of iterations")
 flags.DEFINE_string("game_name", "kuhn_poker", "Name of the game")
-flags.DEFINE_string("solver", "tabular", "Tabular or nn")
 flags.DEFINE_float("init_lr", 1.0, "The initial learning rate")
 flags.DEFINE_float("lr_decay", .999, "Learnign rate multiplier per timestep")
 flags.DEFINE_integer("logfreq", 100, "logging frequency")
@@ -33,6 +32,7 @@ def main(argv):
     import wandb
     wandb.init(project=FLAGS.project)
     wandb.config.update(flags.FLAGS)
+    wandb.config.update({"solver": "ed"})
 
   game = pyspiel.load_game(FLAGS.game_name)
   solver = exploitability_descent.Solver(game)

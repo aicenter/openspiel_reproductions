@@ -71,6 +71,7 @@ def main(_):
     import wandb
     wandb.init(project=FLAGS.project)
     wandb.config.update(flags.FLAGS)
+    wandb.config.update({"solver": FLAGS.loss_str})
 
   game = FLAGS.game
   num_players = 2
