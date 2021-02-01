@@ -10,36 +10,21 @@ from open_spiel.python.algorithms import cfr
 from open_spiel.python.algorithms import exploitability
 import pyspiel
 
-import os
-from pathlib import Path
-import csv
-
 FLAGS = flags.FLAGS
 
 flags.DEFINE_integer("iterations", 100000, "Number of training iterations.")
 flags.DEFINE_string("game", "kuhn_poker", "Name of the game")
 flags.DEFINE_integer("players", 2, "Number of players")
 flags.DEFINE_integer("logfreq", 100, "logging frequency")
-flags.DEFINE_string("logname", "cfr", "Results output filename prefix")
-flags.DEFINE_string("logdir", "logs", "Directory for log files")
-
-def loginit(log_prefix):
-    i = 0
-    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
-        i += 1
-    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
-
-    with open(log_filename, 'w+') as f:
-        writer = csv.writer(f)
-        writer.writerow(["iteration", "exploitability"])
-
-    return log_filename
+flags.DEFINE_string("project", "openspiel", "project name")
+flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
 def main(argv):
-    Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
-    log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
-    log_filename = loginit(log_prefix)
-    
+    if not FLAGS.no_wandb:
+        import wandb
+        wandb.init(project=FLAGS.project)
+        wandb.config.update(flags.FLAGS)
+
     game = pyspiel.load_game(FLAGS.game, {"players": pyspiel.GameParameter(FLAGS.players)})
     cfr_solver = cfr.CFRSolver(game)
 
@@ -47,12 +32,11 @@ def main(argv):
         cfr_solver.evaluate_and_update_policy()
         
         if i % FLAGS.logfreq == 0:
-            conv = exploitability.exploitability(game, cfr_solver.average_policy())
-            logging.info("Iteration: {} Exploitability: {}".format(i, conv))
-        
-            with open(log_filename, 'a') as f:
-                writer = csv.writer(f)
-                writer.writerow([i, conv])
+            exp = exploitability.exploitability(game, cfr_solver.average_policy())
+            if not FLAGS.no_wandb:
+                wandb.log({"Iteration": i, 'Exploitability': exp})
+
+            logging.info("Iteration: {} Exploitability: {}".format(i, exp))
 
 if __name__ == "__main__":
     app.run(main)

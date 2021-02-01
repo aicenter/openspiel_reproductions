@@ -2,8 +2,108 @@ project: openspiel
 container: /home/waltomic/openspiel_jupyter_wandb-v0.1.sif
 
 run:
-  - xfp_kuhn
+  #- xfp_kuhn
+  #- deep_cfr_kuhn
   #- xfp_leduc
+
+cfr_kuhn:
+  script: ./algorithms/cfr.py
+  flagfile: ./configs/cfr_kuhn.cfg
+  partition: cpufast
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-1:00:00
+  job-name: cfr_kuhn
+  output: slogs/cfr_kuhn-%J.log
+
+deep_cfr_kuhn:
+  script: ./algorithms/deep_cfr.py
+  flagfile: ./configs/deep_cfr_kuhn.cfg
+  partition: cpufast
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-4:00:00
+  job-name: deep_cfr_kuhn
+  output: slogs/deep_cfr_kuhn-%J.log
+
+exp_descent_kuhn:
+  script: ./algorithms/exp_descent.py
+  flagfile: ./configs/exp_descent_kuhn.cfg
+  partition: cpufast
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-4:00:00
+  job-name: exp_descent_kuhn
+  output: slogs/exp_descent_kuhn-%J.log
+
+nfsp_kuhn:
+  script: ./algorithms/nfsp_kuhn.py
+  flagfile: ./configs/nfsp_kuhn.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 3-0:00:00
+  job-name: nfsp_kuhn
+  output: slogs/nfsp_kuhn-%J.log
+
+nn_exp_descent_kuhn:
+  script: ./algorithms/nn_exp_descent.py
+  flagfile: ./configs/nn_exp_descent_kuhn.cfg
+  partition: cpufast
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-4:00:00
+  job-name: nn_exp_descent_kuhn
+  output: slogs/nn_exp_descent_kuhn-%J.log
+
+qpg_kuhn:
+  script: ./algorithms/policy_gradient.py
+  flagfile: ./configs/qpg_kuhn.cfg
+  partition: cpu
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 1-0:00:00
+  job-name: qpg_kuhn
+  output: slogs/qpg_kuhn-%J.log
+
+rpg_kuhn:
+  script: ./algorithms/policy_gradient.py
+  flagfile: ./configs/rpg_kuhn.cfg
+  partition: cpu
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 1-0:00:00
+  job-name: rpg_kuhn
+  output: slogs/rpg_kuhn-%J.log
+
+psro_kuhn:
+  script: ./algorithms/psro.py
+  flagfile: ./configs/psro_kuhn.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 3-0:00:00
+  job-name: psro_kuhn
+  output: slogs/psro_kuhn-%J.log
+
+rcfr_kuhn:
+  script: ./algorithms/rcfr.py
+  flagfile: ./configs/rcfr_kuhn.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 2-0:00:00
+  job-name: rcfr_kuhn
+  output: slogs/rcfr_kuhn-%J.log
 
 xfp_kuhn:
   script: ./algorithms/xfp.py
@@ -16,3 +116,114 @@ xfp_kuhn:
   job-name: xfp_kuhn
   output: slogs/xfp_kuhn-%J.log
 
+# Leduc Solvers
+
+cfr_leduc:
+  script: ./algorithms/cfr.py
+  flagfile: ./configs/cfr_leduc.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 3-0:00:00
+  job-name: cfr_leduc
+  output: slogs/cfr_leduc-%J.log
+
+deep_cfr_leduc:
+  script: ./algorithms/deep_cfr.py
+  flagfile: ./configs/deep_cfr_leduc.cfg
+  partition: cpufast
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-4:00:00
+  job-name: deep_cfr_leduc
+  output: slogs/deep_cfr_leduc-%J.log
+
+exp_descent_leduc:
+  script: ./algorithms/exp_descent.py
+  flagfile: ./configs/exp_descent_leduc.cfg
+  partition: cpufast
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-4:00:00
+  job-name: exp_descent_leduc
+  output: slogs/exp_descent_leduc-%J.log
+
+nfsp_leduc:
+  script: ./algorithms/nfsp_leduc.py
+  flagfile: ./configs/nfsp_leduc.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 3-0:00:00
+  job-name: nfsp_leduc
+  output: slogs/nfsp_leduc-%J.log
+
+nn_exp_descent_leduc:
+  script: ./algorithms/nn_exp_descent.py
+  flagfile: ./configs/nn_exp_descent_leduc.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 3-0:00:00
+  job-name: nn_exp_descent_leduc
+  output: slogs/nn_exp_descent_leduc-%J.log
+
+qpg_leduc:
+  script: ./algorithms/policy_gradient.py
+  flagfile: ./configs/qpg_leduc.cfg
+  partition: cpu
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 1-0:00:00
+  job-name: qpg_leduc
+  output: slogs/qpg_leduc-%J.log
+
+rpg_leduc:
+  script: ./algorithms/policy_gradient.py
+  flagfile: ./configs/rpg_leduc.cfg
+  partition: cpu
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 1-0:00:00
+  job-name: rpg_leduc
+  output: slogs/rpg_leduc-%J.log
+
+psro_leduc:
+  script: ./algorithms/psro.py
+  flagfile: ./configs/psro_leduc.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 3-0:00:00
+  job-name: psro_leduc
+  output: slogs/psro_leduc-%J.log
+
+rcfr_leduc:
+  script: ./algorithms/rcfr.py
+  flagfile: ./configs/rcfr_leduc.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 3-0:00:00
+  job-name: rcfr_leduc
+  output: slogs/rcfr_leduc-%J.log
+
+xfp_leduc:
+  script: ./algorithms/xfp.py
+  flagfile: ./configs/xfp_leduc.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 3-0:00:00
+  job-name: xfp_leduc
+  output: slogs/xfp_leduc-%J.log
