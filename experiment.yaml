@@ -1,0 +1,18 @@
+project: openspiel
+container: /home/waltomic/openspiel_jupyter_wandb-v0.1.sif
+
+run:
+  - xfp_kuhn
+  #- xfp_leduc
+
+xfp_kuhn:
+  script: ./algorithms/xfp.py
+  flagfile: ./configs/xfp_kuhn.cfg
+  partition: cpufast
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-3:00:00
+  job-name: xfp_kuhn
+  output: slogs/xfp_kuhn-%J.log
+

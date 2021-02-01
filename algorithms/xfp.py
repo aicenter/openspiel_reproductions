@@ -10,24 +10,21 @@ from open_spiel.python.algorithms import fictitious_play
 from open_spiel.python.algorithms import exploitability
 import pyspiel
 
-import os
-from pathlib import Path
-import csv
-import time
-import wandb
-
 FLAGS = flags.FLAGS
 
 flags.DEFINE_integer("iterations", 100000, "Number of training iterations.")
 flags.DEFINE_string("game", "kuhn_poker", "Name of the game")
 flags.DEFINE_integer("players", 2, "Number of players")
 flags.DEFINE_integer("logfreq", 100, "How often to print the exploitability")
-
-wandb.init(project="rci-tests")
-wandb.run.summary["Solver"] = "XFP"
-wandb.config.update(flags.FLAGS)
+flags.DEFINE_string("project", "openspiel", "project name")
+flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
 def main(argv):
+    if not FLAGS.no_wandb:
+        import wandb
+        wandb.init(project=FLAGS.project)
+        wandb.config.update(flags.FLAGS)
+        
     game = pyspiel.load_game(FLAGS.game, {"players": pyspiel.GameParameter(FLAGS.players)})
     solver = fictitious_play.XFPSolver(game)
 
@@ -35,8 +32,11 @@ def main(argv):
         solver.iteration()
 
         if i % FLAGS.logfreq == 0:
-            conv = exploitability.exploitability(game, solver.average_policy())
-            wandb.log({"Iteration": i, 'NashConv': conv})
+            exp = exploitability.exploitability(game, solver.average_policy())
+            if not FLAGS.no_wandb:
+                wandb.log({"Iteration": i, 'Exploitability': exp})
+            
+            logging.info("Iteration: {}, Exploitability: {}".format(i, exp))
 
 if __name__ == "__main__":
     app.run(main)
