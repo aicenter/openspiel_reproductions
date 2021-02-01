@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import csv
 import time
+import wandb
 
 FLAGS = flags.FLAGS
 
@@ -21,26 +22,12 @@ flags.DEFINE_integer("iterations", 100000, "Number of training iterations.")
 flags.DEFINE_string("game", "kuhn_poker", "Name of the game")
 flags.DEFINE_integer("players", 2, "Number of players")
 flags.DEFINE_integer("logfreq", 100, "How often to print the exploitability")
-flags.DEFINE_string("logname", "xfp", "Results output filename prefix")
-flags.DEFINE_string("logdir", "logs", "Directory for log files")
 
-def loginit(log_prefix):
-    i = 0
-    while os.path.exists("{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)):
-        i += 1
-    log_filename = "{log_prefix}_{i}.csv".format(log_prefix=log_prefix, i=i)
-
-    with open(log_filename, 'w+') as f:
-        writer = csv.writer(f)
-        writer.writerow(["iteration", "exploitability"])
-
-    return log_filename
+wandb.init(project="rci-tests")
+wandb.run.summary["Solver"] = "XFP"
+wandb.config.update(flags.FLAGS)
 
 def main(argv):
-    Path(FLAGS.logdir).mkdir(parents=True, exist_ok=True)
-    log_prefix = os.path.join(FLAGS.logdir, FLAGS.logname)
-    log_filename = loginit(log_prefix)
-    
     game = pyspiel.load_game(FLAGS.game, {"players": pyspiel.GameParameter(FLAGS.players)})
     solver = fictitious_play.XFPSolver(game)
 
@@ -49,11 +36,7 @@ def main(argv):
 
         if i % FLAGS.logfreq == 0:
             conv = exploitability.exploitability(game, solver.average_policy())
-            logging.info("Iteration: {} Exploitability: {}".format(i, conv))
-        
-            with open(log_filename, 'a') as f:
-                writer = csv.writer(f)
-                writer.writerow([i, conv])
+            wandb.log({"Iteration": i, 'NashConv': conv})
 
 if __name__ == "__main__":
     app.run(main)
