@@ -4,7 +4,6 @@ jobs
 logs
 slogs
 
-*.csv
 *.swp
 
 
