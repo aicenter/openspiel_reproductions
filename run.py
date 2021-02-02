@@ -18,7 +18,7 @@ if __name__ == "__main__":
         jobfile = os.path.join(args.jobdir, "{}.job".format(experiment))
         jobargs = (config["container"], exp_config["script"], exp_config["flagfile"])
         cmd = "singularity exec {} python3 {} --flagfile {}".format(*jobargs)
-        if not args.no_wandb:
+        if args.no_wandb:
             cmd = cmd + " --no_wandb"
         
         with open(jobfile, "w") as f:

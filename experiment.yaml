@@ -2,8 +2,10 @@ project: openspiel
 container: /home/waltomic/openspiel_jupyter_wandb-v0.1.sif
 
 run:
+  # - neurd_kuhn
+  # - neurd_leduc
   # - cfr_kuhn
-  #- cfr_leduc
+  # - cfr_leduc
   # - deep_cfr_kuhn
   # - deep_cfr_leduc
   # - exp_descent_kuhn
@@ -22,6 +24,17 @@ run:
   # - rcfr_leduc
   # - xfp_kuhn
   # - xfp_leduc
+
+neurd_kuhn:
+  script: ./algorithms/neurd.py
+  flagfile: ./configs/neurd_kuhn.cfg
+  partition: cpufast
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-4:00:00
+  job-name: neurd_kuhn
+  output: slogs/neurd_kuhn-%J.log
 
 cfr_kuhn:
   script: ./algorithms/cfr.py
@@ -134,6 +147,16 @@ xfp_kuhn:
   output: slogs/xfp_kuhn-%J.log
 
 # Leduc Solvers
+neurd_leduc:
+  script: ./algorithms/neurd.py
+  flagfile: ./configs/neurd_leduc.cfg
+  partition: cpufast
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-4:00:00
+  job-name: neurd_leduc
+  output: slogs/neurd_leduc-%J.log
 
 cfr_leduc:
   script: ./algorithms/cfr.py
