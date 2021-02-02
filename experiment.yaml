@@ -37,11 +37,11 @@ cfr_kuhn:
 deep_cfr_kuhn:
   script: ./algorithms/deep_cfr.py
   flagfile: ./configs/deep_cfr_kuhn.cfg
-  partition: cpufast
+  partition: cpu
   nodes: 1
   ntasks-per-node: 4
   mem-per-cpu: 8G
-  time: 0-4:00:00
+  time: 1-0:00:00
   job-name: deep_cfr_kuhn
   output: slogs/deep_cfr_kuhn-%J.log
 
