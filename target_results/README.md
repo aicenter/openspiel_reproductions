@@ -10,6 +10,8 @@ Target curves extracted from the following figures using [weplotdigitizer](https
   - ed_kuhn.csv
   - ed_leduc.csv
   - nned_leduc.csv
+- *Figure 2*
+  - rcfr_leduc_os.csv
 - *Figure 3*
   - nfsp_leduc_os.csv
   
@@ -22,3 +24,7 @@ Target curves extracted from the following figures using [weplotdigitizer](https
 - qpg_srinivasan_leduc.csv
 - rpg_srinivasan_kuhn.csv
 - rpg_srinivasan_leduc.csv
+
+[Solving Games with Functional Regret Estimation](https://arxiv.org/abs/1411.7974)
+- rcfr_waugh_leduc_22.csv
+- rcfr_waugh_leduc_95.csv
