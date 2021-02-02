@@ -12,6 +12,7 @@ Target curves extracted from the following figures using [weplotdigitizer](https
   - nned_leduc.csv
  - *Figure 3*
   - nfsp_leduc_os.csv
- [Deep Reinforcement Learning from Self-Play in Imperfect-Information Games](https://arxiv.org/abs/1603.01121)
-  - nfsp_leduc_heinrich_silver_16.csv
-  - nfsp_leduc_heinrich_silver_128.csv
+  
+[Deep Reinforcement Learning from Self-Play in Imperfect-Information Games](https://arxiv.org/abs/1603.01121)
+- nfsp_leduc_heinrich_silver_16.csv
+- nfsp_leduc_heinrich_silver_128.csv
