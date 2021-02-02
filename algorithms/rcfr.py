@@ -95,11 +95,11 @@ def main(argv):
         solver.evaluate_and_update_policy(_train_fn)
         
         if i % FLAGS.logfreq == 0:
-            conv = pyspiel.exploitability(game, solver.average_policy())
-            logging.info("Iteration: {} NashConv: {}".format(i, conv))
+            expl = pyspiel.exploitability(game, solver.average_policy())
+            logging.info("Iteration: {} Exploitability: {}".format(i, expl))
         
             if not FLAGS.no_wandb:
-                wandb.log({"Iteration": i, 'NashConv': conv})
+                wandb.log({"Iteration": i, 'Exploitability': expl})
 
 if __name__ == "__main__":
     app.run(main)
