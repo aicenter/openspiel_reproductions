@@ -38,3 +38,6 @@ Target curves extracted from the following figures using [weplotdigitizer](https
 [Pipeline PSRO: A Scalable Approach for Finding Approximate Nash Equilibria in Large Games](https://arxiv.org/pdf/2006.08555.pdf)
 - ppsro_leduc.csv
 - psro_naive_leduc.csv
+
+[Neural Replicator Dynamics](https://arxiv.org/abs/1906.00190)
+- neurd_leduc.csv
