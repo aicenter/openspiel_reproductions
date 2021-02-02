@@ -31,3 +31,6 @@ Target curves extracted from the following figures using [weplotdigitizer](https
 
 [Single Deep Counterfactual Regret Minimization](https://arxiv.org/pdf/1901.07621.pdf)
 - deep_cfr_leduc.csv
+
+[A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning](https://arxiv.org/pdf/1711.00832.pdf)
+- psro_leduc.csv
