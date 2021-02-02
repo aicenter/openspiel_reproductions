@@ -6,6 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--cfg", default="experiment.yaml", help="Experiment config file")
 parser.add_argument("--jobdir", default="jobs", help="Where to store generated slurm jobfiles and logs")
 parser.add_argument("--local", dest='local', action='store_true', help="No cluster; Run in the current session")
+parser.add_argument("--no_wandb", dest='no_wandb', action='store_true', help="Don't log to Weights & Biases")
 args = parser.parse_args()
 
 if __name__ == "__main__":
@@ -17,7 +18,7 @@ if __name__ == "__main__":
         jobfile = os.path.join(args.jobdir, "{}.job".format(experiment))
         jobargs = (config["container"], exp_config["script"], exp_config["flagfile"])
         cmd = "singularity exec {} python3 {} --flagfile {}".format(*jobargs)
-        if not config["wandb"]:
+        if not args.no_wandb:
             cmd = cmd + " --no_wandb"
         
         with open(jobfile, "w") as f:

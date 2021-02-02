@@ -29,7 +29,8 @@ from open_spiel.python.algorithms import exploitability
 from open_spiel.python.algorithms import nfsp
 
 FLAGS = flags.FLAGS
-
+flags.DEFINE_string("game_name", "kuhn_poker",
+                    "Name of the game.")
 flags.DEFINE_integer("num_train_episodes", int(10e7),
                      "Number of training episodes.")
 flags.DEFINE_integer("eval_every", 10000,
