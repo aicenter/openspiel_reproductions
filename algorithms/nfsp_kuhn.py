@@ -116,7 +116,7 @@ def main(unused_argv):
         if not FLAGS.no_wandb:
           wandb.log({"Iteration": ep, 'Exploitability': expl})
 
-        logging.info("Iteration: {} Exploitability: {}".format(i, expl))
+        logging.info("Iteration: {} Exploitability: {}".format(ep, expl))
 
       time_step = env.reset()
       while not time_step.last():
