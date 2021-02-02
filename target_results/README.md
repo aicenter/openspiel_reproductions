@@ -34,3 +34,7 @@ Target curves extracted from the following figures using [weplotdigitizer](https
 
 [A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning](https://arxiv.org/pdf/1711.00832.pdf)
 - psro_leduc.csv
+
+[Pipeline PSRO: A Scalable Approach for Finding Approximate Nash Equilibria in Large Games](https://arxiv.org/pdf/2006.08555.pdf)
+- ppsro_leduc.csv
+- psro_naive_leduc.csv
