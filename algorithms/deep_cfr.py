@@ -62,9 +62,9 @@ def main(argv):
             average_policy = policy.tabular_policy_from_callable(game, deep_cfr_solver.action_probabilities)
             conv = exploitability.nash_conv(game, average_policy)
             if not FLAGS.no_wandb:
-                wandb.log({"Iteration": i, 'NashConv': conv})
+                wandb.log({"Iteration": i * FLAGS.logfreq, 'NashConv': conv})
 
-            logging.info("Iteration: {} NashConv: {}".format(i, conv))
+            logging.info("Iteration: {} NashConv: {}".format(i * FLAGS.logfreq, conv))
 
 if __name__ == "__main__":
     app.run(main)

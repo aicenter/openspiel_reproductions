@@ -16,8 +16,8 @@ run:
   # - qpg_leduc
   # - rpg_kuhn
   # - rpg_leduc
-  - psro_kuhn
-  - psro_leduc
+  # - psro_kuhn
+  # - psro_leduc
   # - rcfr_kuhn
   # - rcfr_leduc
   # - xfp_kuhn
@@ -149,22 +149,22 @@ cfr_leduc:
 deep_cfr_leduc:
   script: ./algorithms/deep_cfr.py
   flagfile: ./configs/deep_cfr_leduc.cfg
-  partition: cpufast
+  partition: cpulong
   nodes: 1
   ntasks-per-node: 4
   mem-per-cpu: 8G
-  time: 0-4:00:00
+  time: 3-0:00:00
   job-name: deep_cfr_leduc
   output: slogs/deep_cfr_leduc-%J.log
 
 exp_descent_leduc:
   script: ./algorithms/exp_descent.py
   flagfile: ./configs/exp_descent_leduc.cfg
-  partition: cpufast
+  partition: cpulong
   nodes: 1
   ntasks-per-node: 4
   mem-per-cpu: 8G
-  time: 0-4:00:00
+  time: 3-0:00:00
   job-name: exp_descent_leduc
   output: slogs/exp_descent_leduc-%J.log
 
