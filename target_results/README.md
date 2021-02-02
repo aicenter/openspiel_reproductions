@@ -16,3 +16,9 @@ Target curves extracted from the following figures using [weplotdigitizer](https
 [Deep Reinforcement Learning from Self-Play in Imperfect-Information Games](https://arxiv.org/abs/1603.01121)
 - nfsp_leduc_heinrich_silver_16.csv
 - nfsp_leduc_heinrich_silver_128.csv
+
+[Actor-Critic Policy Optimization in Partially Observable Multiagent Environments](https://arxiv.org/abs/1810.09026)
+- qpg_srinivasan_kuhn.csv
+- qpg_srinivasan_leduc.csv
+- rpg_srinivasan_kuhn.csv
+- rpg_srinivasan_leduc.csv
