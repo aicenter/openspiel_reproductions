@@ -9,5 +9,4 @@ Target curves extracted from the following figures using [weplotdigitizer](https
 - xfp_leduc.csv
 - ed_kuhn.csv
 - ed_leduc.csv
-- nned_kuhn.csv
 - nned_leduc.csv
