@@ -1,4 +1,7 @@
 # OpenSpiel Reproductions
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mwalton/openspiel_benchmarks/blob/main/openspiel_reproductions.ipynb)
+
 Results reproductions for several core algorithms implemented in the [OpenSpiel](https://github.com/deepmind/open_spiel) framework for learning in games.
 
 If you use OpenSpiel in your research please cite the originating paper:
@@ -23,4 +26,4 @@ If you use OpenSpiel in your research please cite the originating paper:
 }
 ```
 
-If you derive any useful insights from the reproduction paper & code you are, of course welcome, to cite us as well 😉 
+The reference associated with this reproduction is availible here:
