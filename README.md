@@ -26,4 +26,4 @@ If you use OpenSpiel in your research please cite the originating paper:
 }
 ```
 
-If you derive any useful insights from the reproduction paper & code you are, of course welcome, to cite us as well 😉 
+If you derive any useful insights from the reproduction paper or utility in the supplimental code you are, of course welcome, to cite:
