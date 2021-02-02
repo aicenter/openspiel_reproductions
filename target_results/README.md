@@ -10,7 +10,7 @@ Target curves extracted from the following figures using [weplotdigitizer](https
   - ed_kuhn.csv
   - ed_leduc.csv
   - nned_leduc.csv
- - *Figure 3*
+- *Figure 3*
   - nfsp_leduc_os.csv
   
 [Deep Reinforcement Learning from Self-Play in Imperfect-Information Games](https://arxiv.org/abs/1603.01121)
