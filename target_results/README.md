@@ -28,3 +28,6 @@ Target curves extracted from the following figures using [weplotdigitizer](https
 [Solving Games with Functional Regret Estimation](https://arxiv.org/abs/1411.7974)
 - rcfr_waugh_leduc_22.csv
 - rcfr_waugh_leduc_95.csv
+
+[Single Deep Counterfactual Regret Minimization](https://arxiv.org/pdf/1901.07621.pdf)
+- deep_cfr_leduc.csv
