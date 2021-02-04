@@ -12,13 +12,13 @@ run:
   # - exp_descent_leduc
   # - nfsp_kuhn
   # - nfsp_leduc
-  - nn_exp_descent_kuhn
+  # - nn_exp_descent_kuhn
   # - nn_exp_descent_leduc
   # - qpg_kuhn
   # - qpg_leduc
   # - rpg_kuhn
   # - rpg_leduc
-  # - psro_kuhn
+  - psro_kuhn
   # - psro_leduc
   # - rcfr_kuhn
   # - rcfr_leduc

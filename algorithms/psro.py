@@ -219,8 +219,10 @@ def print_policy_analysis(policies, game, verbose=False):
   """
   states_dict = get_all_states.get_all_states(game, np.infty, False, False)
   unique_policies = []
+  total_pool_length = 0
   for player in range(len(policies)):
     cur_policies = policies[player]
+    total_pool_length += len(cur_policies)
     cur_set = set()
     for pol in cur_policies:
       cur_str = ""
@@ -241,7 +243,7 @@ def print_policy_analysis(policies, game, verbose=False):
     for player, cur_set in enumerate(unique_policies):
       print("Player {} : {} unique policies.".format(player, len(cur_set)))
   print("")
-  return unique_policies
+  return unique_policies, total_pool_length
 
 
 def gpsro_looper(env, oracle, agents):
@@ -291,11 +293,15 @@ def gpsro_looper(env, oracle, agents):
 
       exploitabilities, expl_per_player = exploitability.nash_conv(
           env.game, aggr_policies, return_only_nash_conv=False)
+
+      _, total_pool_length = print_policy_analysis(policies, env.game, FLAGS.verbose)
       
       if not FLAGS.no_wandb:
-          wandb.log({"Iteration": gpsro_iteration * FLAGS.prd_iterations, 'NashConv': exploitabilities})
-
-      _ = print_policy_analysis(policies, env.game, FLAGS.verbose)
+        logme = {"Iteration": gpsro_iteration,
+                'NashConv': exploitabilities,
+                'Total Pool Length': total_pool_length}
+        wandb.log(logme)
+      
       if FLAGS.verbose:
         print("Exploitabilities : {}".format(exploitabilities))
         print("Exploitabilities per player : {}".format(expl_per_player))
