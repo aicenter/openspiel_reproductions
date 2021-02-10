@@ -21,6 +21,8 @@ flags.DEFINE_integer("iterations", 100000, "Number of training iterations.")
 flags.DEFINE_integer("num_traversals", 40, "Number of traversals/games")
 flags.DEFINE_integer("batch_size_advantage", 128, "Adv fn batch size")
 flags.DEFINE_integer("batch_size_strategy", 1024, "Strategy batch size")
+flags.DEFINE_integer("num_hidden", 64, "Hidden units in each layer")
+flags.DEFINE_integer("num_layers", 3, "Depth of neural networks")
 flags.DEFINE_bool("reinitialize_advantage_networks", False, "Re-init value net on each CFR iter")
 flags.DEFINE_string("game", "leduc_poker", "Name of the game")
 flags.DEFINE_integer("players", 2, "Number of players")
@@ -41,8 +43,8 @@ def main(argv):
         deep_cfr_solver = deep_cfr.DeepCFRSolver(
             sess,
             game,
-            policy_network_layers=(16,),
-            advantage_network_layers=(16,),
+            policy_network_layers=tuple([FLAGS.num_hidden for _ in range(FLAGS.num_layers)]),
+            advantage_network_layers=tuple([FLAGS.num_hidden for _ in range(FLAGS.num_layers)]),
             num_iterations=FLAGS.logfreq,
             num_traversals=FLAGS.num_traversals,
             learning_rate=1e-3,

@@ -3,7 +3,7 @@ container: /home/waltomic/openspiel_jupyter_wandb-v0.1.sif
 
 run:
   # - neurd_kuhn
-  # - neurd_leduc
+  - neurd_leduc
   # - cfr_kuhn
   # - cfr_leduc
   # - deep_cfr_kuhn
@@ -18,7 +18,7 @@ run:
   # - qpg_leduc
   # - rpg_kuhn
   # - rpg_leduc
-  - psro_kuhn
+  # - psro_kuhn
   # - psro_leduc
   # - rcfr_kuhn
   # - rcfr_leduc
@@ -50,11 +50,11 @@ cfr_kuhn:
 deep_cfr_kuhn:
   script: ./algorithms/deep_cfr.py
   flagfile: ./configs/deep_cfr_kuhn.cfg
-  partition: cpu
+  partition: cpulong
   nodes: 1
   ntasks-per-node: 4
   mem-per-cpu: 8G
-  time: 1-0:00:00
+  time: 3-0:00:00
   job-name: deep_cfr_kuhn
   output: slogs/deep_cfr_kuhn-%J.log
 
@@ -150,11 +150,11 @@ xfp_kuhn:
 neurd_leduc:
   script: ./algorithms/neurd.py
   flagfile: ./configs/neurd_leduc.cfg
-  partition: cpufast
+  partition: cpulong
   nodes: 1
   ntasks-per-node: 4
   mem-per-cpu: 8G
-  time: 0-4:00:00
+  time: 3-0:00:00
   job-name: neurd_leduc
   output: slogs/neurd_leduc-%J.log
 

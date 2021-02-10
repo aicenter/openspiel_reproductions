@@ -22,7 +22,7 @@ FLAGS = flags.FLAGS
 flags.DEFINE_integer("num_steps", 100000, "Number of iterations")
 flags.DEFINE_string("game_name", "kuhn_poker", "Name of the game")
 flags.DEFINE_float("init_lr", 1.0, "The initial learning rate")
-flags.DEFINE_float("lr_decay", .999, "Learnign rate multiplier per timestep")
+flags.DEFINE_float("lr_scale", 1., "Learnign rate multiplier per timestep")
 flags.DEFINE_integer("logfreq", 100, "logging frequency")
 flags.DEFINE_string("project", "openspiel", "project name")
 flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
@@ -39,10 +39,9 @@ def main(argv):
 
   with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
-    lr = FLAGS.init_lr
 
     for i in range(FLAGS.num_steps):
-      lr *= FLAGS.lr_decay #FLAGS.init_lr / np.sqrt(1 + i)
+      lr = FLAGS.init_lr / np.sqrt(i * FLAGS.lr_scale + 1)
       conv = solver.step(sess, learning_rate = lr)
       
       if i % FLAGS.logfreq == 0:

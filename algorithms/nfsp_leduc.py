@@ -71,7 +71,7 @@ flags.DEFINE_bool("use_checkpoints", False, "Save/load neural network weights.")
 flags.DEFINE_string("checkpoint_dir", "/tmp/nfsp_test",
                     "Directory to save/load the agent.")
 flags.DEFINE_string("project", "openspiel", "project name")
-flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
+flags.DEFINE_boolean("no_wandb", True, "Disables Weights & Biases")
 
 class NFSPPolicies(policy.Policy):
   """Joint policy to be evaluated."""

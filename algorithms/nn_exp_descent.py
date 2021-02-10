@@ -51,7 +51,7 @@ FLAGS = flags.FLAGS
 flags.DEFINE_integer("num_steps", 100000, "Number of iterations")
 flags.DEFINE_string("game_name", "kuhn_poker", "Name of the game")
 flags.DEFINE_float("init_lr", 0.1, "The initial learning rate")
-flags.DEFINE_float("lr_decay", .999, "Learnign rate multiplier per timestep")
+flags.DEFINE_float("lr_scale", 1., "Learnign rate multiplier per timestep")
 flags.DEFINE_float("regularizer_scale", 0.001,
                    "Scale for L2 regularization of NN weights")
 flags.DEFINE_integer("num_hidden", 64, "Hidden units.")
@@ -97,16 +97,12 @@ def main(argv):
   optimizer_step = optimizer.minimize(loss)
 
   # Training loop
-  lr = FLAGS.init_lr
   with tf.train.MonitoredTrainingSession() as sess:
     for step in range(FLAGS.num_steps):
-      t0 = time.time()
-      lr *= FLAGS.lr_decay
       nash_conv_value, _ = sess.run([nash_conv, optimizer_step],
           feed_dict={
-              learning_rate: lr#FLAGS.init_lr / np.sqrt(1 + step),
+              learning_rate: FLAGS.init_lr / np.sqrt(step * FLAGS.lr_scale + 1),
           })
-      t1 = time.time()
       # Optionally log our progress
       if step % FLAGS.logfreq == 0:
         if not FLAGS.no_wandb:
