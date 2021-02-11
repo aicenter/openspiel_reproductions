@@ -1,0 +1,27 @@
+program: ./algorithms/policy_gradient.py
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - ${args}
+method: bayes
+metric:
+  name: Exploitability
+  goal: minimize
+parameters:
+  num_episodes:
+    value: 8000000
+  game:
+    value: "kuhn_poker"
+  logfreq:
+    value: 1000
+  loss_str:
+    value: "rm"
+  num_hidden:
+    values: [64, 128, 256]
+  num_layers:
+    values: [1, 2, 3, 4, 5]
+early_terminate:
+  type: hyperband
+  max_iter: 8000
+  s: 2
