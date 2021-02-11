@@ -34,7 +34,8 @@ flags.DEFINE_integer("num_episodes", int(1e6), "Number of train episodes.")
 flags.DEFINE_string("game", "kuhn_poker", "Name of the game")
 flags.DEFINE_enum("loss_str", "rpg", ["a2c", "rpg", "qpg", "rm"],
                   "PG loss to use.")
-flags.DEFINE_list("hidden_layers_sizes", [128,], "Number of hidden units in the avg-net and Q-net.")
+flags.DEFINE_integer("num_hidden", 64, "Hidden units.")
+flags.DEFINE_integer("num_layers", 1, "Hidden layers.")
 flags.DEFINE_integer("logfreq", int(1e3), "logging frequency")
 flags.DEFINE_string("project", "openspiel", "project name")
 flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
@@ -83,6 +84,7 @@ def main(_):
 
   with tf.Session() as sess:
     # pylint: disable=g-complex-comprehension
+    hidden_layers_sizes = tuple([int(FLAGS.num_hidden) for _ in range(int(FLAGS.num_layers))])
     agents = [
         policy_gradient.PolicyGradient(
             sess,
@@ -90,7 +92,7 @@ def main(_):
             info_state_size,
             num_actions,
             loss_str=FLAGS.loss_str,
-            hidden_layers_sizes=tuple(map(int, FLAGS.hidden_layers_sizes))) for idx in range(num_players)
+            hidden_layers_sizes=hidden_layers_sizes) for idx in range(num_players)
     ]
     expl_policies_avg = PolicyGradientPolicies(env, agents)
 
