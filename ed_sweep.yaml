@@ -1,0 +1,24 @@
+program: ./algorithms/exp_descent.py
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - ${args}
+method: bayes
+metric:
+  name: NashConv
+  goal: minimize
+parameters:
+  num_steps:
+    value: 100000
+  game_name:
+    value: "leduc_poker"
+  logfreq:
+    value: 100
+  lr_scale:
+    values: [1., .1, .01, .001]
+  init_lr:
+    values: [1, 2, 4, 8, 16]
+early_terminate:
+  type: hyperband
+  min_iter: 10

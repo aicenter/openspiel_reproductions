@@ -3,7 +3,7 @@ container: /home/waltomic/openspiel_jupyter_wandb-v0.1.sif
 
 run:
   # - neurd_kuhn
-  - neurd_leduc
+  #- neurd_leduc
   # - cfr_kuhn
   # - cfr_leduc
   # - deep_cfr_kuhn
@@ -18,8 +18,8 @@ run:
   # - qpg_leduc
   # - rpg_kuhn
   # - rpg_leduc
-  # - psro_kuhn
-  # - psro_leduc
+  - psro_kuhn
+  - psro_leduc
   # - rcfr_kuhn
   # - rcfr_leduc
   # - xfp_kuhn
