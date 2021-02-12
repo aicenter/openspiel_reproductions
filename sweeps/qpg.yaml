@@ -25,3 +25,9 @@ early_terminate:
   type: hyperband
   max_iter: 8000
   s: 2
+
+# batch_size=16,
+# entropy_cost=0.001,
+# critic_learning_rate=0.01,
+# pi_learning_rate=0.01,
+# num_critic_before_pi=4

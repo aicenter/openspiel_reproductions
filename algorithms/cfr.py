@@ -26,7 +26,15 @@ def main(argv):
         wandb.config.update(flags.FLAGS)
         wandb.config.update({"solver": "cfr"})
 
-    game = pyspiel.load_game(FLAGS.game, {"players": pyspiel.GameParameter(FLAGS.players)})
+    if FLAGS.game == "goofspiel":
+        game = pyspiel.load_game_as_turn_based(
+        "goofspiel", {
+            "imp_info": pyspiel.GameParameter(True),
+            "num_cards": pyspiel.GameParameter(4),
+            "points_order": pyspiel.GameParameter("descending")
+        })
+    else:
+        game = pyspiel.load_game(FLAGS.game, {"players": pyspiel.GameParameter(FLAGS.players)})
     cfr_solver = cfr.CFRSolver(game)
 
     for i in range(FLAGS.iterations):

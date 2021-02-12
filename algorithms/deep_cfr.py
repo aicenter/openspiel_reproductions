@@ -14,6 +14,7 @@ from open_spiel.python.algorithms import deep_cfr
 from open_spiel.python.algorithms import expected_game_score
 from open_spiel.python.algorithms import exploitability
 import pyspiel
+import collections
 
 FLAGS = flags.FLAGS
 
@@ -29,6 +30,22 @@ flags.DEFINE_integer("players", 2, "Number of players")
 flags.DEFINE_integer("logfreq", 100, "How often to print the exploitability")
 flags.DEFINE_string("project", "openspiel", "project name")
 flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
+
+def solve(self):
+    """Modified deep-cfr solution logic for online policy evaluation"""
+    advantage_losses = collections.defaultdict(list)
+    for _ in range(self._num_iterations):
+        for p in range(self._num_players):
+        for _ in range(self._num_traversals):
+            self._traverse_game_tree(self._root_node, p)
+        if self._reinitialize_advantage_networks:
+            # Re-initialize advantage network for player and train from scratch.
+            self.reinitialize_advantage_network(p)
+        advantage_losses[p].append(self._learn_advantage_network(p))
+        self._iteration += 1
+    # Train policy network.
+    policy_loss = self._learn_strategy_network()
+    return self._policy_network, advantage_losses, policy_loss
 
 def main(argv):
     if not FLAGS.no_wandb:

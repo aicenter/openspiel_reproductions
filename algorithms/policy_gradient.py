@@ -39,6 +39,13 @@ flags.DEFINE_integer("num_layers", 1, "Hidden layers.")
 flags.DEFINE_integer("logfreq", int(1e3), "logging frequency")
 flags.DEFINE_string("project", "openspiel", "project name")
 flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
+flags.DEFINE_integer("batch_size", 16, "Training batch size.")
+flags.DEFINE_float("entropy_cost", 0.001, "")
+flags.DEFINE_float("critic_learning_rate", 0.01, "")
+flags.DEFINE_float("pi_learning_rate", 0.01, "")
+flags.DEFINE_integer("num_critic_before_pi", 4, "")
+
+
 
 class PolicyGradientPolicies(policy.Policy):
   """Joint policy to be evaluated."""
@@ -92,7 +99,12 @@ def main(_):
             info_state_size,
             num_actions,
             loss_str=FLAGS.loss_str,
-            hidden_layers_sizes=hidden_layers_sizes) for idx in range(num_players)
+            hidden_layers_sizes=hidden_layers_sizes,
+            batch_size=FLAGS.batch_size,
+            entropy_cost=FLAGS.entropy_cost,
+            critic_learning_rate=FLAGS.critic_learning_rate,
+            pi_learning_rate=FLAGS.pi_learning_rate,
+            num_critic_before_pi=FLAGS.num_critic_before_pi) for idx in range(num_players)
     ]
     expl_policies_avg = PolicyGradientPolicies(env, agents)
 

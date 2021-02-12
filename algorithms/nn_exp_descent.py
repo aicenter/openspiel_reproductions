@@ -71,7 +71,17 @@ def main(argv):
 
   # Create the game to use, and a loss calculator for it
   logging.info("Loading %s", FLAGS.game_name)
-  game = pyspiel.load_game(FLAGS.game_name)
+
+  if FLAGS.game_name == "goofspiel":
+    game = pyspiel.load_game_as_turn_based(
+    "goofspiel", {
+        "imp_info": pyspiel.GameParameter(True),
+        "num_cards": pyspiel.GameParameter(4),
+        "points_order": pyspiel.GameParameter("descending")
+    })
+  else:
+    game = pyspiel.load_game(FLAGS.game_name)
+    
   loss_calculator = exploitability_descent.LossCalculator(game)
 
   # Build the network

@@ -34,7 +34,16 @@ def main(argv):
     wandb.config.update(flags.FLAGS)
     wandb.config.update({"solver": "ed"})
 
-  game = pyspiel.load_game(FLAGS.game_name)
+
+  if FLAGS.game_name == "goofspiel":
+    game = pyspiel.load_game_as_turn_based(
+    "goofspiel", {
+        "imp_info": pyspiel.GameParameter(True),
+        "num_cards": pyspiel.GameParameter(4),
+        "points_order": pyspiel.GameParameter("descending")
+    })
+  else:
+    game = pyspiel.load_game(FLAGS.game_name)
   solver = exploitability_descent.Solver(game)
 
   with tf.Session() as sess:

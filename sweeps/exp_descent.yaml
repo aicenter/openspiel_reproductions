@@ -12,7 +12,7 @@ parameters:
   num_steps:
     value: 100000
   game_name:
-    value: "leduc_poker"
+    value: "liars_dice"
   logfreq:
     value: 100
   lr_scale:
@@ -21,4 +21,5 @@ parameters:
     values: [1, 2, 4, 8, 16]
 early_terminate:
   type: hyperband
-  min_iter: 10
+  max_iter: 8000
+  s: 2

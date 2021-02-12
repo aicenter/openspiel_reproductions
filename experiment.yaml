@@ -6,6 +6,10 @@ run:
   #- neurd_leduc
   # - cfr_kuhn
   # - cfr_leduc
+  #- cfr_liars_dice
+  # - cfr_goofspiel
+  # - xfp_liars_dice
+  # - xfp_goofspiel
   # - deep_cfr_kuhn
   # - deep_cfr_leduc
   # - exp_descent_kuhn
@@ -14,12 +18,12 @@ run:
   # - nfsp_leduc
   # - nn_exp_descent_kuhn
   # - nn_exp_descent_leduc
-  # - qpg_kuhn
-  # - qpg_leduc
-  # - rpg_kuhn
-  # - rpg_leduc
-  - psro_kuhn
-  - psro_leduc
+  #- qpg_kuhn
+  #- qpg_leduc
+  - rpg_kuhn
+  #- rpg_leduc
+  # - psro_kuhn
+  # - psro_leduc
   # - rcfr_kuhn
   # - rcfr_leduc
   # - xfp_kuhn
@@ -168,6 +172,50 @@ cfr_leduc:
   time: 3-0:00:00
   job-name: cfr_leduc
   output: slogs/cfr_leduc-%J.log
+
+cfr_liars_dice:
+  script: ./algorithms/cfr.py
+  flagfile: ./configs/cfr_liars_dice.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 3-0:00:00
+  job-name: cfr_liars_dice
+  output: slogs/cfr_liars_dice-%J.log
+
+cfr_goofspiel:
+  script: ./algorithms/cfr.py
+  flagfile: ./configs/cfr_goofspiel.cfg
+  partition: cpu
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-1:00:00
+  job-name: cfr_gs
+  output: slogs/cfr_gs-%J.log
+
+xfp_liars_dice:
+  script: ./algorithms/xfp.py
+  flagfile: ./configs/xfp_liars_dice.cfg
+  partition: cpulong
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 3-0:00:00
+  job-name: xfp_liars_dice
+  output: slogs/xfp_liars_dice-%J.log
+
+xfp_goofspiel:
+  script: ./algorithms/xfp.py
+  flagfile: ./configs/xfp_goofspiel.cfg
+  partition: cpu
+  nodes: 1
+  ntasks-per-node: 4
+  mem-per-cpu: 8G
+  time: 0-1:00:00
+  job-name: xfp_gs
+  output: slogs/xfp_gs-%J.log
 
 deep_cfr_leduc:
   script: ./algorithms/deep_cfr.py

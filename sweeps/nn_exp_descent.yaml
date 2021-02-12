@@ -12,7 +12,7 @@ parameters:
   num_steps:
     value: 100000
   game_name:
-    value: "leduc_poker"
+    value: "liars_dice"
   logfreq:
     value: 100
   lr_scale:
