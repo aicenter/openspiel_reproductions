@@ -27,37 +27,38 @@ flags.DEFINE_integer("logfreq", 100, "logging frequency")
 flags.DEFINE_string("project", "openspiel", "project name")
 flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
+
 def main(argv):
-  if not FLAGS.no_wandb:
-    import wandb
-    wandb.init(project=FLAGS.project)
-    wandb.config.update(flags.FLAGS)
-    wandb.config.update({"solver": "ed"})
+    if not FLAGS.no_wandb:
+        import wandb
+        wandb.init(project=FLAGS.project)
+        wandb.config.update(flags.FLAGS)
+        wandb.config.update({"solver": "ed"})
 
+    if FLAGS.game_name == "goofspiel":
+        game = pyspiel.load_game_as_turn_based(
+            "goofspiel", {
+                "imp_info": pyspiel.GameParameter(True),
+                "num_cards": pyspiel.GameParameter(4),
+                "points_order": pyspiel.GameParameter("descending")
+            })
+    else:
+        game = pyspiel.load_game(FLAGS.game_name)
+    solver = exploitability_descent.Solver(game)
 
-  if FLAGS.game_name == "goofspiel":
-    game = pyspiel.load_game_as_turn_based(
-    "goofspiel", {
-        "imp_info": pyspiel.GameParameter(True),
-        "num_cards": pyspiel.GameParameter(4),
-        "points_order": pyspiel.GameParameter("descending")
-    })
-  else:
-    game = pyspiel.load_game(FLAGS.game_name)
-  solver = exploitability_descent.Solver(game)
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
 
-  with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
+        for i in range(FLAGS.num_steps):
+            lr = FLAGS.init_lr / np.sqrt(i * FLAGS.lr_scale + 1)
+            conv = solver.step(sess, learning_rate=lr)
 
-    for i in range(FLAGS.num_steps):
-      lr = FLAGS.init_lr / np.sqrt(i * FLAGS.lr_scale + 1)
-      conv = solver.step(sess, learning_rate = lr)
-      
-      if i % FLAGS.logfreq == 0:
-        if not FLAGS.no_wandb:
-          wandb.log({"Iteration": i, 'NashConv': conv})
-          
-        logging.info("Iteration: {} NashConv: {}".format(i, conv))
+            if i % FLAGS.logfreq == 0:
+                if not FLAGS.no_wandb:
+                    wandb.log({"Iteration": i, 'NashConv': conv})
+
+                logging.info("Iteration: {} NashConv: {}".format(i, conv))
+
 
 if __name__ == "__main__":
-  app.run(main)
+    app.run(main)

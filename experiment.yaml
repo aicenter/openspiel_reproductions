@@ -20,7 +20,7 @@ run:
   # - nn_exp_descent_leduc
   #- qpg_kuhn
   #- qpg_leduc
-  - rpg_kuhn
+  #- rpg_kuhn
   #- rpg_leduc
   # - psro_kuhn
   # - psro_leduc
