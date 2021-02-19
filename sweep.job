@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --partition cpu
+#SBATCH --partition cpulong
 #SBATCH --nodes 1
 #SBATCH --ntasks-per-node 1
 #SBATCH --mem-per-cpu 8G
-#SBATCH --time 1-0:00:00
+#SBATCH --time 3-0:00:00
 #SBATCH --job-name sweep
 #SBATCH --output slogs/sweep-%J.log
 module purge
-singularity exec /home/waltomic/openspiel_jupyter_wandb-v0.1.sif wandb agent mwalton/openspiel_benchmarks-algorithms/fatz02yi
+singularity exec /home/waltomic/openspiel_jupyter_wandb-v0.1.sif wandb agent mwalton/openspiel_benchmarks-algorithms/6bwywtob

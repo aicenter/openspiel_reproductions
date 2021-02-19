@@ -22,12 +22,13 @@ parameters:
   step_size:
     values: [.5, .9, 1., 1.5, 2., 2.5, 3., 3.5, 4.]
   threshold:
-    values: [1., 2., 3]
+    min: 1.1
+    max: 6.1
   batch_size:
     value: 256
   autoencode:
     values: [True, False]
-  
+
 early_terminate:
   type: hyperband
   max_iter: 1000

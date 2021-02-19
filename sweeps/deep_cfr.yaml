@@ -9,17 +9,33 @@ metric:
   name: NashConv
   goal: minimize
 parameters:
-  num_steps:
-    value: 100000
-  game_name:
-    value: "liars_dice"
+  iterations:
+    value: 1000
+  game:
+    value: "leduc_poker"
   logfreq:
-    value: 100
-  lr_scale:
-    values: [1., .1, .01, .001]
-  init_lr:
-    values: [1, 2, 4, 8, 16]
+    value: 1
+  num_traversals:
+    values: [1500, 30000, 100000]
+  batch_size_advantage:
+    value: 2048
+  batch_size_strategy:
+    value: 2048
+  num_hidden:
+    values: [64, 128, 256]
+  num_layers:
+    values: [3, 4, 5]
+  reinitialize_advantage_networks:
+    value: True
+  learning_rate:
+    value: .001
+  memory_capacity:
+    value: 1000000
+  policy_network_train_steps:
+    value: 5000
+  advantage_network_train_steps:
+    value: 750
 early_terminate:
   type: hyperband
-  max_iter: 8000
+  max_iter: 1000
   s: 2

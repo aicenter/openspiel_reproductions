@@ -1,0 +1,33 @@
+program: ./algorithms/policy_gradient.py
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - ${args}
+method: random
+metric:
+  name: Exploitability
+  goal: minimize
+parameters:
+  num_episodes:
+    value: 8000000
+  game:
+    value: "kuhn_poker"
+  logfreq:
+    value: 1000
+  loss_str:
+    value: "rm"
+  num_hidden:
+    value: 128
+  num_layers:
+    value: 2
+  batch_size:
+    value: 4
+  entropy_cost:
+    value: .1
+  num_critic_before_pi:
+    value: 128
+  critic_learning_rate:
+    value: .01
+  pi_learning_rate:
+    value: .01
