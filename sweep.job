@@ -7,4 +7,4 @@
 #SBATCH --job-name sweep
 #SBATCH --output slogs/sweep-%J.log
 module purge
-singularity exec /home/waltomic/openspiel_jupyter_wandb-v0.1.sif wandb agent mwalton/openspiel_benchmarks-algorithms/6bwywtob
+singularity exec /home/waltomic/openspiel_jupyter_wandb-v0.1.sif wandb agent mwalton/openspiel_benchmarks-algorithms/
