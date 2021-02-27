@@ -1,8 +1,6 @@
 # OpenSpiel Reproductions
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mwalton/openspiel_benchmarks/blob/main/openspiel_reproductions.ipynb)
-
-Results reproductions for several core algorithms implemented in the [OpenSpiel](https://github.com/deepmind/open_spiel) framework for learning in games.
+Results reproductions for several core algorithms implemented in the [OpenSpiel](https://github.com/deepmind/open_spiel) framework for learning in games. Individual experiments may be run using scripts in the `algorithms` foler. SLURM jobfiles can also be constructed and batch run with `run.py`.
 
 If you use OpenSpiel in your research please cite the originating paper:
 
