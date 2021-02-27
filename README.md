@@ -5,6 +5,7 @@
 Results reproductions for several core algorithms implemented in the [OpenSpiel](https://github.com/deepmind/open_spiel) framework for learning in games.
 
 If you use OpenSpiel in your research please cite the originating paper:
+
 ```
 @article{LanctotEtAl2019OpenSpiel,
   title     = {{OpenSpiel}: A Framework for Reinforcement Learning in Games},

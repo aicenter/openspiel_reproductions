@@ -1,3 +1,5 @@
+# TODO: this is a messy way of maintaining job configs
+# should just pass partition type & cfg / sweep to run.py
 project: openspiel
 container: /home/waltomic/openspiel_jupyter_wandb-v0.1.sif # path to singularity image
 

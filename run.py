@@ -1,3 +1,5 @@
+''' Main runscript for batch-starting SLURM job arrays'''
+
 import yaml
 import os
 import argparse
