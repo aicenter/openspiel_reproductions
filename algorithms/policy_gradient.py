@@ -40,10 +40,12 @@ flags.DEFINE_integer("logfreq", 100, "logging frequency")
 flags.DEFINE_string("project", "openspiel", "project name")
 flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 flags.DEFINE_integer("batch_size", 16, "Training batch size.")
-flags.DEFINE_float("entropy_cost", 0.001, "")
-flags.DEFINE_float("critic_learning_rate", 0.01, "")
-flags.DEFINE_float("pi_learning_rate", 0.01, "")
-flags.DEFINE_integer("num_critic_before_pi", 4, "")
+flags.DEFINE_float("entropy_cost", 0.001, "Entropy regularization weight")
+flags.DEFINE_float("critic_learning_rate", 0.01,
+                   "Advantage function learning rate")
+flags.DEFINE_float("pi_learning_rate", 0.01, "Policy learning rate")
+flags.DEFINE_integer("num_critic_before_pi", 4,
+                     "Number of critic gradient steps before updating the policy")
 
 
 class PolicyGradientPolicies(policy.Policy):
