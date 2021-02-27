@@ -1,4 +1,6 @@
 # Copyright 2019 DeepMind Technologies Ltd. All rights reserved.
+# Copyright 2021 Artificial Intelligence Center, Czech Techical University
+# Copied and adapted from OpenSpiel (https://github.com/deepmind/open_spiel)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -60,65 +62,70 @@ flags.DEFINE_integer("logfreq", 100, "logging frequency")
 flags.DEFINE_string("project", "openspiel", "project name")
 flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
+
 def main(argv):
-  del argv
+    del argv
 
-  if not FLAGS.no_wandb:
-    import wandb
-    wandb.init(project=FLAGS.project)
-    wandb.config.update(flags.FLAGS)
-    wandb.config.update({"solver": "nn ed"})
+    if not FLAGS.no_wandb:
+        import wandb
+        wandb.init(project=FLAGS.project)
+        wandb.config.update(flags.FLAGS)
+        wandb.config.update({"solver": "nn ed"})
 
-  # Create the game to use, and a loss calculator for it
-  logging.info("Loading %s", FLAGS.game_name)
+    # Create the game to use, and a loss calculator for it
+    logging.info("Loading %s", FLAGS.game_name)
 
-  if FLAGS.game_name == "goofspiel":
-    game = pyspiel.load_game_as_turn_based(
-    "goofspiel", {
-        "imp_info": pyspiel.GameParameter(True),
-        "num_cards": pyspiel.GameParameter(4),
-        "points_order": pyspiel.GameParameter("descending")
-    })
-  else:
-    game = pyspiel.load_game(FLAGS.game_name)
-    
-  loss_calculator = exploitability_descent.LossCalculator(game)
+    if FLAGS.game_name == "goofspiel":
+        game = pyspiel.load_game_as_turn_based(
+            "goofspiel", {
+                "imp_info": pyspiel.GameParameter(True),
+                "num_cards": pyspiel.GameParameter(4),
+                "points_order": pyspiel.GameParameter("descending")
+            })
+    else:
+        game = pyspiel.load_game(FLAGS.game_name)
 
-  # Build the network
-  num_hidden = FLAGS.num_hidden
-  num_layers = FLAGS.num_layers
-  layer = tf.constant(loss_calculator.tabular_policy.state_in, tf.float64)
-  for _ in range(num_layers):
+    loss_calculator = exploitability_descent.LossCalculator(game)
+
+    # Build the network
+    num_hidden = FLAGS.num_hidden
+    num_layers = FLAGS.num_layers
+    layer = tf.constant(loss_calculator.tabular_policy.state_in, tf.float64)
+    for _ in range(num_layers):
+        regularizer = (tf.keras.regularizers.l2(l=FLAGS.regularizer_scale))
+        layer = tf.layers.dense(
+            layer, num_hidden, activation=tf.nn.relu, kernel_regularizer=regularizer)
+
     regularizer = (tf.keras.regularizers.l2(l=FLAGS.regularizer_scale))
-    layer = tf.layers.dense(layer, num_hidden, activation=tf.nn.relu, kernel_regularizer=regularizer)
-  
-  regularizer = (tf.keras.regularizers.l2(l=FLAGS.regularizer_scale))
-  layer = tf.layers.dense(layer, game.num_distinct_actions(), kernel_regularizer=regularizer)
-  tabular_policy = loss_calculator.masked_softmax(layer)
+    layer = tf.layers.dense(
+        layer, game.num_distinct_actions(), kernel_regularizer=regularizer)
+    tabular_policy = loss_calculator.masked_softmax(layer)
 
-  # Build the loss - exploitability descent loss plus regularizer loss
-  nash_conv, loss = loss_calculator.loss(tabular_policy)
-  loss += tf.losses.get_regularization_loss()
+    # Build the loss - exploitability descent loss plus regularizer loss
+    nash_conv, loss = loss_calculator.loss(tabular_policy)
+    loss += tf.losses.get_regularization_loss()
 
-  # Use a simple gradient descent optimizer
-  learning_rate = tf.placeholder(tf.float64, (), name="learning_rate")
-  optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-  #optimizer = tf.train.AdamOptimizer()
-  optimizer_step = optimizer.minimize(loss)
+    # Use a simple gradient descent optimizer
+    learning_rate = tf.placeholder(tf.float64, (), name="learning_rate")
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+    #optimizer = tf.train.AdamOptimizer()
+    optimizer_step = optimizer.minimize(loss)
 
-  # Training loop
-  with tf.train.MonitoredTrainingSession() as sess:
-    for step in range(FLAGS.num_steps):
-      nash_conv_value, _ = sess.run([nash_conv, optimizer_step],
-          feed_dict={
-              learning_rate: FLAGS.init_lr / np.sqrt(step * FLAGS.lr_scale + 1),
-          })
-      # Optionally log our progress
-      if step % FLAGS.logfreq == 0:
-        if not FLAGS.no_wandb:
-          wandb.log({"Iteration": step, 'NashConv': nash_conv_value})
+    # Training loop
+    with tf.train.MonitoredTrainingSession() as sess:
+        for step in range(FLAGS.num_steps):
+            nash_conv_value, _ = sess.run([nash_conv, optimizer_step],
+                                          feed_dict={
+                learning_rate: FLAGS.init_lr / np.sqrt(step * FLAGS.lr_scale + 1),
+            })
+            # Optionally log our progress
+            if step % FLAGS.logfreq == 0:
+                if not FLAGS.no_wandb:
+                    wandb.log({"Iteration": step, 'NashConv': nash_conv_value})
 
-        logging.info("Iteration: {} NashConv: {}".format(step, nash_conv_value))
+                logging.info("Iteration: {} NashConv: {}".format(
+                    step, nash_conv_value))
+
 
 if __name__ == "__main__":
-  app.run(main)
+    app.run(main)

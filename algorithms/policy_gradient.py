@@ -1,4 +1,6 @@
 # Copyright 2019 DeepMind Technologies Ltd. All rights reserved.
+# Copyright 2021 Artificial Intelligence Center, Czech Techical University
+# Copied and adapted from OpenSpiel (https://github.com/deepmind/open_spiel)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

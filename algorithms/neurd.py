@@ -1,4 +1,6 @@
 # Copyright 2019 DeepMind Technologies Ltd. All rights reserved.
+# Copyright 2021 Artificial Intelligence Center, Czech Techical University
+# Copied and adapted from OpenSpiel (https://github.com/deepmind/open_spiel)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -49,7 +51,8 @@ flags.DEFINE_integer(
 flags.DEFINE_boolean(
     "use_skip_connections", True,
     "Whether or not to use skip connections in the policy model.")
-flags.DEFINE_integer("batch_size", 100, "The policy model training batch size.")
+flags.DEFINE_integer(
+    "batch_size", 100, "The policy model training batch size.")
 flags.DEFINE_float(
     "threshold", 2.,
     "Logits of the policy model will be discouraged from growing beyond "
@@ -66,45 +69,46 @@ flags.DEFINE_boolean("no_wandb", False, "Disables Weights & Biases")
 
 
 def main(_):
-  if not FLAGS.no_wandb:
-    import wandb
-    wandb.init(project=FLAGS.project)
-    wandb.config.update(flags.FLAGS)
-    wandb.config.update({"solver": "neurd"})
+    if not FLAGS.no_wandb:
+        import wandb
+        wandb.init(project=FLAGS.project)
+        wandb.config.update(flags.FLAGS)
+        wandb.config.update({"solver": "neurd"})
 
-  game = pyspiel.load_game(FLAGS.game,
-                           {"players": pyspiel.GameParameter(FLAGS.players)})
+    game = pyspiel.load_game(FLAGS.game,
+                             {"players": pyspiel.GameParameter(FLAGS.players)})
 
-  models = []
-  for _ in range(game.num_players()):
-    models.append(
-        neurd.DeepNeurdModel(
-            game,
-            num_hidden_layers=FLAGS.num_hidden_layers,
-            num_hidden_units=FLAGS.num_hidden_units,
-            num_hidden_factors=FLAGS.num_hidden_factors,
-            use_skip_connections=FLAGS.use_skip_connections,
-            autoencode=FLAGS.autoencode))
+    models = []
+    for _ in range(game.num_players()):
+        models.append(
+            neurd.DeepNeurdModel(
+                game,
+                num_hidden_layers=FLAGS.num_hidden_layers,
+                num_hidden_units=FLAGS.num_hidden_units,
+                num_hidden_factors=FLAGS.num_hidden_factors,
+                use_skip_connections=FLAGS.use_skip_connections,
+                autoencode=FLAGS.autoencode))
 
-  solver = neurd.CounterfactualNeurdSolver(game, models)
+    solver = neurd.CounterfactualNeurdSolver(game, models)
 
-  def _train(model, data):
-    neurd.train(
-        model,
-        data,
-        batch_size=FLAGS.batch_size,
-        step_size=FLAGS.step_size,
-        threshold=FLAGS.threshold,
-        autoencoder_loss=(tf.compat.v1.losses.huber_loss
-                          if FLAGS.autoencode else None))
+    def _train(model, data):
+        neurd.train(
+            model,
+            data,
+            batch_size=FLAGS.batch_size,
+            step_size=FLAGS.step_size,
+            threshold=FLAGS.threshold,
+            autoencoder_loss=(tf.compat.v1.losses.huber_loss
+                              if FLAGS.autoencode else None))
 
-  for i in range(FLAGS.iterations):
-    solver.evaluate_and_update_policy(_train)
-    if i % FLAGS.logfreq == 0:
-      conv = pyspiel.exploitability(game, solver.average_policy())
-      print("Iteration {} Exploitability {}".format(i, conv))
-      if not FLAGS.no_wandb:
-        wandb.log({"Iteration": i, 'Exploitability': conv})
+    for i in range(FLAGS.iterations):
+        solver.evaluate_and_update_policy(_train)
+        if i % FLAGS.logfreq == 0:
+            conv = pyspiel.exploitability(game, solver.average_policy())
+            print("Iteration {} Exploitability {}".format(i, conv))
+            if not FLAGS.no_wandb:
+                wandb.log({"Iteration": i, 'Exploitability': conv})
+
 
 if __name__ == "__main__":
-  app.run(main)
+    app.run(main)
