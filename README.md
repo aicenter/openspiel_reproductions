@@ -25,4 +25,14 @@ If you use OpenSpiel in your research please cite the originating paper:
 }
 ```
 
-The reference associated with this reproduction is availible here:
+The report associated with this reproduction is availible here:
+```
+@misc{walton2021multiagent,
+      title={Multi-agent Reinforcement Learning in OpenSpiel: A Reproduction Report}, 
+      author={Michael Walton and Viliam Lisy},
+      year={2021},
+      eprint={2103.00187},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI}
+}
+```
